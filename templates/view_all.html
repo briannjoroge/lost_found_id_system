@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MUT Lost and Found</title>
+    <title>{{ title }} - MUT ID Tracker</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
@@ -18,17 +18,24 @@
   <body>
     {% include 'navbar.html' %}
 
-    <header>
-      <h1>Lost and Found System</h1>
-      <p>
-        Helps students report and recover lost ID cards using image recognition.
-      </p>
-    </header>
-
     <div class="container">
-      <h2>Lost Student IDs</h2>
-      <div class="grid" id="lost-grid">
-        {% for item in lost_items %}
+      <div class="page-header">
+        <h2>{{ title }}</h2>
+        <a href="/" class="back-link">&larr; Back to Home</a>
+      </div>
+
+      <div class="search-bar">
+        <input
+          type="text"
+          id="searchInput"
+          onkeyup="filterGrid()"
+          placeholder="Search by name, reg number, or department..."
+        />
+        <button class="search-btn" onclick="filterGrid()">&#128269;</button>
+      </div>
+
+      <div class="grid" id="itemsGrid">
+        {% for item in items %} {% if type == "Lost" %}
         <div
           class="card"
           onclick="openModal(this)"
@@ -40,31 +47,14 @@
           data-img="{{ item['image_path'] }}"
         >
           <img src="{{ item['image_path'] }}" alt="Lost ID" />
-
           <div class="card-content">
             <p class="student-name">{{ item['student_name'] }}</p>
             <p class="reg-num">{{ item['reg_number'] }}</p>
             <p class="dept-name">{{ item['department'] }}</p>
           </div>
         </div>
+
         {% else %}
-        <div class="empty-state"><p>No lost IDs reported.</p></div>
-        {% endfor %}
-      </div>
-
-      <div style="text-align: center; margin-top: 20px">
-        <a
-          href="/all-lost"
-          class="load-btn"
-          style="text-decoration: none; display: inline-block"
-        >
-          View All Lost IDs
-        </a>
-      </div>
-
-      <h2>Found Student IDs</h2>
-      <div class="grid" id="found-grid">
-        {% for item in found_items %}
         <div
           class="card"
           onclick="openModal(this)"
@@ -79,29 +69,19 @@
             <p><small>Click to view details</small></p>
           </div>
         </div>
-        {% else %}
-        <div class="empty-state"><p>No found IDs reported.</p></div>
+        {% endif %} {% else %}
+        <div class="empty-state">
+          <p>No records found in this category.</p>
+        </div>
         {% endfor %}
-      </div>
-
-      <div style="text-align: center; margin-top: 20px">
-        <a
-          href="/all-found"
-          class="load-btn"
-          style="text-decoration: none; display: inline-block"
-        >
-          View All Found IDs
-        </a>
       </div>
     </div>
 
     <div id="idModal" class="modal">
       <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">&times;</span>
-
         <h2 id="modalTitle">ID Details</h2>
         <img id="modalImg" class="modal-img" src="" alt="Full ID" />
-
         <div id="modalDetails"></div>
       </div>
     </div>

@@ -41,40 +41,42 @@ def init_db():
     conn.commit()
     conn.close()
 
-def get_lost_ids():
+def get_db_connection():
     conn = sqlite3.connect('lostfound.db')
+    conn.row_factory = sqlite3.Row
+    return conn
+
+def get_lost_ids(limit=8, offset=0):
+    conn = get_db_connection()
     cursor = conn.cursor()
-
     cursor.execute("""
-        SELECT student_name, reg_number, department, image_path, date_reported
-        FROM lost_ids
+        SELECT student_name, reg_number, department, image_path, date_reported 
+        FROM lost_ids 
         ORDER BY date_reported DESC
-    """)
-
+        LIMIT ? OFFSET ?
+    """, (limit, offset))
     records = cursor.fetchall()
     conn.close()
-    return records
 
+    return [dict(row) for row in records]
 
-def get_found_ids():
-    conn = sqlite3.connect('lostfound.db')
+def get_found_ids(limit=8, offset=0):
+    conn = get_db_connection()
     cursor = conn.cursor()
-
     cursor.execute("""
-        SELECT location_found, image_path, date_reported
-        FROM found_ids
+        SELECT location_found, image_path, date_reported 
+        FROM found_ids 
         ORDER BY date_reported DESC
-    """)
-
+        LIMIT ? OFFSET ?
+    """, (limit, offset))
     records = cursor.fetchall()
     conn.close()
-    return records
-
+    return [dict(row) for row in records]
 
 @app.route('/')
 def home():
-    lost_items = get_lost_ids()
-    found_items = get_found_ids()
+    lost_items = get_lost_ids(limit=4, offset=0)
+    found_items = get_found_ids(limit=4, offset=0)
     return render_template(
         'index.html',
         lost_items=lost_items,
@@ -108,6 +110,12 @@ def lost():
 
     return render_template('lost.html')
 
+@app.route('/all-lost')
+def all_lost():
+    # grab the top 100 - will work on pagination later
+    items = get_lost_ids(limit=100, offset=0)
+    return render_template('view_all.html', items=items, title="All Lost Student IDs", type="Lost")
+
 @app.route('/found', methods=['GET', 'POST'])
 def found():
     if request.method == 'POST':
@@ -133,6 +141,10 @@ def found():
 
     return render_template('found.html')
 
+@app.route('/all-found')
+def all_found():
+    items = get_found_ids(limit=100, offset=0)
+    return render_template('view_all.html', items=items, title="All Found Student IDs", type="Found")
 
 
 if __name__ == '__main__':

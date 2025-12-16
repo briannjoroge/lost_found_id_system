@@ -1,35 +1,46 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Report Lost ID</title>
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    {% include 'navbar.html' %}
 
-    <nav>
-        <a href="/">Home</a> |
-        <a href="/lost">Report Lost ID</a> |
-        <a href="/found">Report Found ID</a>
-    </nav>
-
-    <hr>
+    <hr />
 
     <h2>Report Lost Student ID</h2>
 
     <form action="/lost" method="POST" enctype="multipart/form-data">
-        <label>Student Name:</label><br>
-        <input type="text" name="student_name" required><br><br>
+      <label>Student Name:</label><br />
+      <input type="text" name="student_name" required /><br /><br />
 
-        <label>Registration Number:</label><br>
-        <input type="text" name="reg_number" required><br><br>
+      <label>Registration Number:</label><br />
+      <input type="text" name="reg_number" required /><br /><br />
 
-        <label>Department:</label><br>
-        <input type="text" name="department" required><br><br>
+      <label>Department:</label><br />
+      <input type="text" name="department" required /><br /><br />
 
-        <label>Upload ID Image:</label><br>
-        <input type="file" name="id_image" accept="image/*" required><br><br>
+      <label>Upload ID Image:</label><br />
+      <input
+        type="file"
+        name="id_image"
+        accept="image/*"
+        required
+      /><br /><br />
 
-        <button type="submit">Submit Report</button>
+      <button type="submit">Submit Report</button>
     </form>
-
-</body>
+  </body>
 </html>

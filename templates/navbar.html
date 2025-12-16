@@ -1,0 +1,22 @@
+<nav>
+  <a href="/" class="nav-brand">
+    <img
+      src="{{ url_for('static', filename='logo.png') }}"
+      alt="MUT Logo"
+      class="nav-logo"
+    />
+    <span>MUT ID Tracker</span>
+  </a>
+
+  <div class="hamburger" onclick="toggleMenu()">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+
+  <div class="nav-links" id="navLinks">
+    <a href="/">Home</a>
+    <a href="/lost">Report Lost ID</a>
+    <a href="/found">Report Found ID</a>
+  </div>
+</nav>
