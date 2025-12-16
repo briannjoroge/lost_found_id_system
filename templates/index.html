@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lost and Found System</title>
+</head>
+<body>
+
+    <nav>
+        <a href="/">Home</a> |
+        <a href="/lost">Report Lost ID</a> |
+        <a href="/found">Report Found ID</a>
+    </nav>
+
+    <hr>
+
+    <h1>University Lost and Found System</h1>
+
+    <p>
+        This system helps students report and recover lost university ID cards
+        using image recognition techniques.
+    </p>
+
+    <h2>Lost Student IDs</h2>
+<div class="grid">
+  {% for item in lost_items %}
+    <div class="card">
+      <img src="{{ item[3] }}" width="150">
+      <p><strong>Name:</strong> {{ item[0] }}</p>
+      <p><strong>Reg No:</strong> {{ item[1] }}</p>
+      <p><strong>Dept:</strong> {{ item[2] }}</p>
+      <p><small>Date: {{ item[4] }}</small></p>
+    </div>
+  {% else %}
+    <p>No lost IDs reported.</p>
+  {% endfor %}
+</div>
+
+<hr>
+
+<h2>Found Student IDs</h2>
+<div class="grid">
+  {% for item in found_items %}
+    <div class="card">
+      <img src="{{ item[3] }}" width="150">
+      <p><strong>Name:</strong> {{ item[0] }}</p>
+      <p><strong>Reg No:</strong> {{ item[1] }}</p>
+      <p><strong>Dept:</strong> {{ item[2] }}</p>
+      <p><small>{{ item[4] }}</small></p>
+    </div>
+  {% else %}
+    <p>No found IDs reported.</p>
+  {% endfor %}
+</div>
+
+</body>
+</html>

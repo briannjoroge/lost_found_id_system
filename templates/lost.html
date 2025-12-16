@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Report Lost ID</title>
+</head>
+<body>
+
+    <nav>
+        <a href="/">Home</a> |
+        <a href="/lost">Report Lost ID</a> |
+        <a href="/found">Report Found ID</a>
+    </nav>
+
+    <hr>
+
+    <h2>Report Lost Student ID</h2>
+
+    <form action="/lost" method="POST" enctype="multipart/form-data">
+        <label>Student Name:</label><br>
+        <input type="text" name="student_name" required><br><br>
+
+        <label>Registration Number:</label><br>
+        <input type="text" name="reg_number" required><br><br>
+
+        <label>Department:</label><br>
+        <input type="text" name="department" required><br><br>
+
+        <label>Upload ID Image:</label><br>
+        <input type="file" name="id_image" accept="image/*" required><br><br>
+
+        <button type="submit">Submit Report</button>
+    </form>
+
+</body>
+</html>

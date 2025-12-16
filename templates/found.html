@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Report Found ID</title>
+</head>
+<body>
+
+    <nav>
+        <a href="/">Home</a> |
+        <a href="/lost">Report Lost ID</a> |
+        <a href="/found">Report Found ID</a>
+    </nav>
+
+    <hr>
+
+    <h2>Report Found Student ID</h2>
+
+    <form action="/found" method="POST" enctype="multipart/form-data">
+        <label>Location Found:</label><br>
+        <input type="text" name="location" required><br><br>
+
+        <label>Upload ID Image:</label><br>
+        <input type="file" name="id_image" accept="image/*" required><br><br>
+
+        <button type="submit">Submit Found ID</button>
+    </form>
+
+</body>
+</html>
