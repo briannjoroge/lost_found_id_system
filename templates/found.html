@@ -1,13 +1,14 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Report Found ID</title>
+    <title>Report Found ID - MUT ID Tracker</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
     />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -18,24 +19,57 @@
   <body>
     {% include 'navbar.html' %}
 
-    <hr />
+    <div class="container">
+      <div class="page-header">
+        <h2>Report a Found Student ID</h2>
+        <a href="/" class="back-link">&larr; Back to Home</a>
+      </div>
 
-    <h2>Report Found Student ID</h2>
+      <div class="form-card">
+        <p class="form-instruction">
+          Thank you for being a good comrade! Please tell us where you found the
+          ID and upload a clear picture of it. We will handle the rest.
+        </p>
 
-    <form action="/found" method="POST" enctype="multipart/form-data">
-      <label>Location Found:</label><br />
-      <input type="text" name="location" required /><br /><br />
+        <form action="/found" method="POST" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="location">Location Found</label>
+            <input
+              type="text"
+              id="location"
+              name="location"
+              list="loc_suggestions"
+              placeholder="e.g. Tuition Block"
+              required
+            />
+            <datalist id="loc_suggestions">
+              <option value="Main Gate"></option>
+              <option value="Small Gate"></option>
+              <option value="Tuition Block"></option>
+              <option value="Hostels"></option>
+              <option value="Playing Field"></option>
+              <option value="Science Complex"></option>
+              <option value="Administration Block"></option>
+            </datalist>
+          </div>
 
-      <label>Upload ID Image:</label><br />
-      <input
-        type="file"
-        name="id_image"
-        accept="image/*"
-        required
-      /><br /><br />
+          <div class="form-group">
+            <label for="id_image">Upload ID Photo (Clear Image)</label>
+            <input
+              type="file"
+              id="id_image"
+              name="id_image"
+              accept="image/*"
+              class="file-input"
+              required
+            />
+            <small>Supported formats: JPG, PNG, JPEG</small>
+          </div>
 
-      <button type="submit">Submit Found ID</button>
-    </form>
+          <button type="submit" class="submit-btn">Submit Found ID</button>
+        </form>
+      </div>
+    </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
