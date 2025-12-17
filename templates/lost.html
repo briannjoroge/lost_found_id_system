@@ -1,9 +1,9 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Report Lost ID</title>
+    <title>Report Lost ID - MUT ID Tracker</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
@@ -18,29 +18,79 @@
   <body>
     {% include 'navbar.html' %}
 
-    <hr />
+    <div class="container">
+      <div class="page-header">
+        <h2>Report a Lost Student ID</h2>
+        <a href="/" class="back-link">&larr; Back to Home</a>
+      </div>
 
-    <h2>Report Lost Student ID</h2>
+      <div class="form-card">
+        <p class="form-instruction">
+          Enter the details of the student whose ID is lost. This will help us
+          match it if someone finds it.
+        </p>
 
-    <form action="/lost" method="POST" enctype="multipart/form-data">
-      <label>Student Name:</label><br />
-      <input type="text" name="student_name" required /><br /><br />
+        <form action="/lost" method="POST" enctype="multipart/form-data">
+          <div class="form-group">
+            <label for="student_name">Student Name</label>
+            <input
+              type="text"
+              id="student_name"
+              name="student_name"
+              placeholder="e.g. John Doe"
+              required
+            />
+          </div>
 
-      <label>Registration Number:</label><br />
-      <input type="text" name="reg_number" required /><br /><br />
+          <div class="form-group">
+            <label for="reg_number">Registration Number</label>
+            <input
+              type="text"
+              id="reg_number"
+              name="reg_number"
+              placeholder="e.g. SC200/0000/2021"
+              required
+            />
+          </div>
 
-      <label>Department:</label><br />
-      <input type="text" name="department" required /><br /><br />
+          <div class="form-group">
+            <label for="department">Department</label>
+            <input
+              type="text"
+              id="department"
+              name="department"
+              list="dept_suggestions"
+              placeholder="e.g. Computer Science"
+              required
+            />
+            <datalist id="dept_suggestions">
+              <option value="Computer Science"></option>
+              <option value="Business"></option>
+              <option value="Education"></option>
+              <option value="Engineering"></option>
+              <option value="Pure & Applied Sciences"></option>
+              <option value="Health Sciences"></option>
+            </datalist>
+          </div>
 
-      <label>Upload ID Image:</label><br />
-      <input
-        type="file"
-        name="id_image"
-        accept="image/*"
-        required
-      /><br /><br />
+          <div class="form-group">
+            <label for="id_image">Upload ID Photo (Clear Image)</label>
+            <input
+              type="file"
+              id="id_image"
+              name="id_image"
+              accept="image/*"
+              class="file-input"
+              required
+            />
+            <small>Supported formats: JPG, PNG, JPEG</small>
+          </div>
 
-      <button type="submit">Submit Report</button>
-    </form>
+          <button type="submit" class="submit-btn">Submit Report</button>
+        </form>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
   </body>
 </html>

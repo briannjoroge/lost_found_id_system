@@ -20,3 +20,15 @@
     <a href="/found">Report Found ID</a>
   </div>
 </nav>
+
+{% with messages = get_flashed_messages(with_categories=true) %} {% if messages
+%}
+<div class="toast-container">
+  {% for category, message in messages %}
+  <div class="toast {{ category }}">
+    <span>{{ message }}</span>
+    <button onclick="this.parentElement.style.display='none';">&times;</button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %} {% endwith %}

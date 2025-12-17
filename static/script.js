@@ -95,3 +95,18 @@ function filterGrid() {
     }
   }
 }
+
+// --- 4. Auto-Hide Toasts ---
+window.onload = function () {
+  const toasts = document.getElementsByClassName("toast");
+  if (toasts.length > 0) {
+    setTimeout(function () {
+      for (let toast of toasts) {
+        toast.style.transition = "opacity 0.5s ease";
+        toast.style.opacity = "0";
+
+        setTimeout(() => (toast.style.display = "none"), 500);
+      }
+    }, 4000);
+  }
+};

@@ -2,14 +2,17 @@ import os
 import uuid
 import sqlite3
 from datetime import datetime
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, flash, url_for
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 UPLOAD_FOLDER = 'static/uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'development_key_for_testing')
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -89,7 +92,16 @@ def lost():
         student_name = request.form['student_name']
         reg_number = request.form['reg_number']
         department = request.form['department']
+        
+        if 'id_image' not in request.files:
+            flash('No file part', 'error')
+            return redirect(request.url)
+            
         image = request.files['id_image']
+
+        if image.filename == '':
+            flash('No selected file', 'error')
+            return redirect(request.url)
 
         if image and allowed_file(image.filename):
             filename = secure_filename(image.filename)
@@ -97,7 +109,7 @@ def lost():
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
             image.save(image_path)
 
-            conn = sqlite3.connect('lostfound.db')
+            conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute('''
                 INSERT INTO lost_ids (student_name, reg_number, department, image_path, date_reported)
@@ -106,7 +118,11 @@ def lost():
             conn.commit()
             conn.close()
 
-        return redirect('/')
+            flash('Report submitted successfully!', 'success')
+            return redirect('/')
+        else:
+            flash('Invalid file type! Please upload an image (JPG, JPEG, PNG).', 'error')
+            return redirect(request.url)
 
     return render_template('lost.html')
 
@@ -120,7 +136,16 @@ def all_lost():
 def found():
     if request.method == 'POST':
         location = request.form['location']
+        
+        if 'id_image' not in request.files:
+            flash('No file part', 'error')
+            return redirect(request.url)
+
         image = request.files['id_image']
+        
+        if image.filename == '':
+            flash('No selected file', 'error')
+            return redirect(request.url)
 
         if image and allowed_file(image.filename):
             filename = secure_filename(image.filename)
@@ -128,7 +153,7 @@ def found():
             image_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_name)
             image.save(image_path)
 
-            conn = sqlite3.connect('lostfound.db')
+            conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute('''
                 INSERT INTO found_ids (location_found, image_path, date_reported)
@@ -137,7 +162,11 @@ def found():
             conn.commit()
             conn.close()
 
-        return redirect('/')
+            flash('Found ID reported successfully!', 'success')
+            return redirect('/')
+        else:
+            flash('Invalid file type! Please upload an image (JPG, JPEG, PNG).', 'error')
+            return redirect(request.url)
 
     return render_template('found.html')
 

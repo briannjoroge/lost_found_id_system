@@ -2,3 +2,5 @@ static/uploads/
 *.jpg
 *.jpeg
 *.png
+
+.env
