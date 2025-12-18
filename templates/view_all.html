@@ -64,9 +64,28 @@
           data-img="{{ item['image_path'] }}"
         >
           <img src="{{ item['image_path'] }}" alt="Found ID" />
+
           <div class="card-content">
             <p><strong>Found at:</strong> {{ item['location_found'] }}</p>
             <p><small>Click to view details</small></p>
+
+            <div class="claim-section" onclick="event.stopPropagation()">
+              {% if current_user.is_authenticated %}
+              <form
+                action="{{ url_for('main.claim_item', item_id=item['id']) }}"
+                method="POST"
+              >
+                <button type="submit" class="claim-btn">✋ Claim This</button>
+              </form>
+              {% else %}
+              <p class="login-prompt">
+                <a href="{{ url_for('auth.login') }}" class="login-link"
+                  >Login</a
+                >
+                to claim.
+              </p>
+              {% endif %}
+            </div>
           </div>
         </div>
         {% endif %} {% else %}

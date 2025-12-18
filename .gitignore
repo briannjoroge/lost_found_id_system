@@ -1,6 +1,21 @@
+# Database files
+*.db
+
+# Uploaded images
 static/uploads/
 *.jpg
 *.jpeg
 *.png
 
+# Python compiled files
+__pycache__/
+*.py[cod]
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Environment Variables
 .env
+

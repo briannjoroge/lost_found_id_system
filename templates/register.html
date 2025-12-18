@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register - MUT ID Tracker</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    {% include 'navbar.html' %}
+
+    <div class="container">
+      <div class="page-header">
+        <h2>Create an Account</h2>
+      </div>
+
+      <div class="form-card">
+        <p class="form-instruction">
+          Register to claim found IDs or manage your lost reports.
+        </p>
+
+        <form action="/register" method="POST">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input
+              type="text"
+              name="name"
+              placeholder="e.g. Jane Doe"
+              minlength="3"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Student Email</label>
+            <input
+              type="email"
+              name="email"
+              class="text-input"
+              placeholder="e.g. jane@student.mut.ac.ke"
+              pattern="[^@\s]+@[^@\s]+\.[^@\s]+"
+              title="Please enter a valid email address (e.g. user@domain.com)"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input
+              type="tel"
+              name="phone"
+              placeholder="0712345678"
+              pattern="[0-9]{10}"
+              title="Please enter a valid 10-digit phone number"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="reg_number">Registration Number</label>
+            <input
+              type="text"
+              name="reg_number"
+              placeholder="e.g. SC200/0000/2021"
+              minlength="12"
+              required
+            />
+            <small>This must match the Reg No. on your ID card.</small>
+          </div>
+
+          <div class="form-group">
+            <label for="department">Department</label>
+            <input
+              type="text"
+              name="department"
+              placeholder="e.g. Computer Science, Education, Business"
+              required
+            />
+          </div>
+
+          <div class="form-group password-wrapper">
+            <label for="password">Password</label>
+            <div class="password-container">
+              <input
+                type="password"
+                id="regPassword"
+                name="password"
+                class="text-input"
+                placeholder="Min 8 chars"
+                minlength="8"
+                required
+              />
+              <span
+                class="toggle-password"
+                onclick="togglePassword('regPassword', this)"
+                >👁️</span
+              >
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn">Sign Up</button>
+
+          <div style="margin-top: 15px; text-align: center">
+            <p>
+              Already have an account?
+              <a href="/login" style="color: #2c3e50; font-weight: bold"
+                >Login here</a
+              >
+            </p>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

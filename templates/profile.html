@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Profile Settings - MUT ID Tracker</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@300;400;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    {% include 'navbar.html' %}
+
+    <div class="container">
+      <div class="page-header">
+        <h2>Hi, {{ user['name'].split(' ')[0] }}</h2>
+        <p style="color: #666; margin-top: 5px">
+          Manage your personal details and security settings.
+        </p>
+        <a href="/" class="back-link">&larr; Back to Home</a>
+      </div>
+
+      <div class="form-card" style="margin-bottom: 30px">
+        <h3>Personal Details</h3>
+
+        <form action="{{ url_for('auth.profile') }}" method="POST">
+          <input type="hidden" name="action" value="update_info" />
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input
+              type="text"
+              name="name"
+              value="{{ user['name'] }}"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input
+              type="tel"
+              name="phone"
+              value="{{ user['phone'] }}"
+              pattern="[0-9]{10}"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label style="color: #999">Email Address (Locked)</label>
+            <input
+              type="text"
+              value="{{ user['email'] }}"
+              class="readonly-input"
+              readonly
+            />
+          </div>
+
+          <div class="form-group">
+            <label style="color: #999">Registration Number (Locked)</label>
+            <input
+              type="text"
+              value="{{ user['reg_number'] }}"
+              class="readonly-input"
+              readonly
+            />
+          </div>
+
+          <div class="form-group">
+            <label style="color: #999">Department (Locked)</label>
+            <input
+              type="text"
+              value="{{ user['department'] }}"
+              class="readonly-input"
+              readonly
+            />
+          </div>
+
+          <button type="submit" class="submit-btn">Save Details</button>
+        </form>
+      </div>
+
+      <div class="form-card">
+        <h3>Security Settings</h3>
+
+        <form action="{{ url_for('auth.profile') }}" method="POST">
+          <input type="hidden" name="action" value="change_password" />
+
+          <div class="form-group">
+            <label for="old_password">Current Password</label>
+            <div class="password-container">
+              <input
+                type="password"
+                id="oldPass"
+                name="old_password"
+                class="text-input"
+                placeholder="Enter current password"
+                required
+              />
+              <span
+                class="toggle-password"
+                onclick="togglePassword('oldPass', this)"
+                >👁️</span
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="new_password">New Password</label>
+            <div class="password-container">
+              <input
+                type="password"
+                id="newPass"
+                name="new_password"
+                class="text-input"
+                placeholder="Min 8 characters"
+                minlength="8"
+                required
+              />
+              <span
+                class="toggle-password"
+                onclick="togglePassword('newPass', this)"
+                >👁️</span
+              >
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="confirm_password">Confirm New Password</label>
+            <div class="password-container">
+              <input
+                type="password"
+                id="confirmPass"
+                name="confirm_password"
+                class="text-input"
+                placeholder="Retype new password"
+                required
+              />
+              <span
+                class="toggle-password"
+                onclick="togglePassword('confirmPass', this)"
+                >👁️</span
+              >
+            </div>
+
+            <small
+              id="matchMessage"
+              style="display: none; font-weight: bold; margin-top: 5px"
+            ></small>
+          </div>
+
+          <button type="submit" class="submit-btn" id="passSubmitBtn">
+            Change Password
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      const newPass = document.getElementById("newPass");
+      const confirmPass = document.getElementById("confirmPass");
+      const matchMessage = document.getElementById("matchMessage");
+      const submitBtn = document.getElementById("passSubmitBtn");
+
+      function checkPasswordMatch() {
+        const val1 = newPass.value;
+        const val2 = confirmPass.value;
+
+        if (val2 === "") {
+          matchMessage.style.display = "none";
+          return;
+        }
+
+        matchMessage.style.display = "block";
+
+        if (val1 === val2) {
+          matchMessage.style.color = "#2ecc71";
+          matchMessage.innerText = "✓ Passwords match";
+          submitBtn.disabled = false;
+          submitBtn.style.opacity = "1";
+        } else {
+          matchMessage.style.color = "#e74c3c";
+          matchMessage.innerText = "✕ Passwords do not match";
+          submitBtn.disabled = true;
+          submitBtn.style.opacity = "0.6";
+        }
+      }
+
+      newPass.addEventListener("keyup", checkPasswordMatch);
+      confirmPass.addEventListener("keyup", checkPasswordMatch);
+    </script>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+  </body>
+</html>

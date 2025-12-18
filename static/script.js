@@ -4,50 +4,107 @@ function toggleMenu() {
   navLinks.classList.toggle("active");
 }
 
-// --- 2. Modal for Student ID Details ---
-function openModal(cardElement) {
-  const modal = document.getElementById("idModal");
-  const modalImg = document.getElementById("modalImg");
-  const modalDetails = document.getElementById("modalDetails");
-  const modalTitle = document.getElementById("modalTitle");
+document.addEventListener("click", function (event) {
+  const navLinks = document.getElementById("navLinks");
+  const hamburger = document.querySelector(".hamburger");
 
-  const type = cardElement.getAttribute("data-type");
-  const imgUrl = cardElement.getAttribute("data-img");
-  const date = cardElement.getAttribute("data-date");
+  if (navLinks.classList.contains("active")) {
+    if (!navLinks.contains(event.target) && !hamburger.contains(event.target)) {
+      navLinks.classList.remove("active");
+    }
+  }
+});
 
-  modalImg.src = imgUrl;
+// --- 2. Toggle Password Visibility ---
+function togglePassword(inputId, icon) {
+  const input = document.getElementById(inputId);
+
+  if (input.type === "password") {
+    input.type = "text";
+    icon.textContent = "❌";
+  } else {
+    input.type = "password";
+    icon.textContent = "👁️";
+  }
+}
+
+// --- 3. Auto-Hide Toasts ---
+window.onload = function () {
+  const toasts = document.getElementsByClassName("toast");
+  if (toasts.length > 0) {
+    setTimeout(function () {
+      for (let toast of toasts) {
+        toast.style.transition = "opacity 0.5s ease";
+        toast.style.opacity = "0";
+
+        setTimeout(() => (toast.style.display = "none"), 500);
+      }
+    }, 4000);
+  }
+};
+
+// --- 4. Modal for Student ID Details ---
+const modal = document.getElementById("idModal");
+const modalTitle = document.getElementById("modalTitle");
+const modalImg = document.getElementById("modalImg");
+const modalDetails = document.getElementById("modalDetails");
+
+function openModal(card) {
+  const type = card.getAttribute("data-type");
+  const imgStr = card.getAttribute("data-img");
+  const dateStr = card.getAttribute("data-date");
+  const itemId = card.getAttribute("data-id");
+
+  modal.style.display = "flex";
+  modalImg.src = imgStr;
+
+  let htmlContent = "";
 
   if (type === "Lost") {
-    const name = cardElement.getAttribute("data-name");
-    const reg = cardElement.getAttribute("data-reg");
-    const dept = cardElement.getAttribute("data-dept");
+    modalTitle.innerText = "Lost Item Details";
+    const name = card.getAttribute("data-name");
+    const reg = card.getAttribute("data-reg");
+    const dept = card.getAttribute("data-dept");
 
-    modalTitle.innerText = "Lost Student ID";
-    modalDetails.innerHTML = `
-            <p><strong>Student Name:</strong> ${name}</p>
-            <p><strong>Reg Number:</strong> ${reg}</p>
-            <p><strong>Department:</strong> ${dept}</p>
-            <p><strong>Date Reported:</strong> ${date}</p>
-            <hr>
-            <p style="color:red; font-size:0.9rem;">
-                <em>If found, please report it using the "Report Found ID" page.</em>
+    htmlContent = `
+            <div class="detail-row"><strong>Student:</strong> ${name}</div>
+            <div class="detail-row"><strong>Reg No:</strong> ${reg}</div>
+            <div class="detail-row"><strong>Department:</strong> ${dept}</div>
+            <div class="detail-row"><strong>Reported:</strong> ${dateStr}</div>
+            <p style="margin-top:15px; color:#666; font-size:0.9rem;">
+               If you find this ID, please report it via the 'Report Found' page.
             </p>
         `;
   } else {
-    const loc = cardElement.getAttribute("data-loc");
+    modalTitle.innerText = "Found Item Details";
+    const loc = card.getAttribute("data-loc");
 
-    modalTitle.innerText = "Found Student ID";
-    modalDetails.innerHTML = `
-            <p><strong>Location Found:</strong> ${loc}</p>
-            <p><strong>Date Reported:</strong> ${date}</p>
-            <hr>
-            <p style="color:green; font-weight:bold;">
-                Is this your ID? Please visit the security office to claim it.
-            </p>
+    htmlContent = `
+            <div class="detail-row"><strong>Found At:</strong> ${loc}</div>
+            <div class="detail-row"><strong>Reported:</strong> ${dateStr}</div>
+            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
         `;
+
+    if (userLoggedIn) {
+      htmlContent += `
+                <p style="margin-bottom: 10px; font-weight: bold; color: #2c3e50;">Is this your ID?</p>
+                <form action="/claim/${itemId}" method="POST">
+                    <button type="submit" class="claim-btn">✋ Claim This ID</button>
+                </form>
+            `;
+    } else {
+      htmlContent += `
+                <p style="color: #1d52a1ff;">
+                    Is this your ID? <br>
+                    <a href="/login" style="color: #1d52a1ff; font-weight: bold; text-decoration: underline;">
+                        Login to claim it.
+                    </a>
+                </p>
+            `;
+    }
   }
 
-  modal.style.display = "flex";
+  modalDetails.innerHTML = htmlContent;
 }
 
 function closeModal() {
@@ -62,7 +119,7 @@ window.onclick = function (event) {
   }
 };
 
-// --- 3. Client-Side Search / Filter Logic ---
+// --- 5. Client-Side Search / Filter Logic ---
 function filterGrid() {
   const input = document.getElementById("searchInput");
   const filter = input.value.toLowerCase();
@@ -95,18 +152,3 @@ function filterGrid() {
     }
   }
 }
-
-// --- 4. Auto-Hide Toasts ---
-window.onload = function () {
-  const toasts = document.getElementsByClassName("toast");
-  if (toasts.length > 0) {
-    setTimeout(function () {
-      for (let toast of toasts) {
-        toast.style.transition = "opacity 0.5s ease";
-        toast.style.opacity = "0";
-
-        setTimeout(() => (toast.style.display = "none"), 500);
-      }
-    }, 4000);
-  }
-};
