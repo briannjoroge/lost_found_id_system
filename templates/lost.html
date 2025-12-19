@@ -37,7 +37,7 @@
               type="text"
               id="student_name"
               name="student_name"
-              placeholder="e.g. John Doe"
+              value="{{ current_user.name }}"
               required
             />
           </div>
@@ -48,7 +48,7 @@
               type="text"
               id="reg_number"
               name="reg_number"
-              placeholder="e.g. SC200/0000/2021"
+              value="{{ current_user.reg_number }}"
               required
             />
           </div>
@@ -59,22 +59,29 @@
               type="text"
               id="department"
               name="department"
-              list="dept_suggestions"
-              placeholder="e.g. Computer Science"
+              value="{{ current_user.department }}"
               required
             />
-            <datalist id="dept_suggestions">
-              <option value="Computer Science"></option>
-              <option value="Business"></option>
-              <option value="Education"></option>
-              <option value="Engineering"></option>
-              <option value="Pure & Applied Sciences"></option>
-              <option value="Health Sciences"></option>
-            </datalist>
           </div>
 
           <div class="form-group">
-            <label for="id_image">Upload ID Photo (Clear Image)</label>
+            <label for="id_image">Upload Photo for Verification</label>
+
+            <p
+              style="
+                font-size: 0.9rem;
+                color: #555;
+                margin-top: 0;
+                margin-bottom: 10px;
+                line-height: 1.4;
+              "
+            >
+              Please upload a <strong>copy of your ID</strong> (if you have one)
+              or a <strong>clear selfie</strong> of yourself. <br /><em
+                >We use this to verify your identity when the ID is found.</em
+              >
+            </p>
+
             <input
               type="file"
               id="id_image"
@@ -83,7 +90,7 @@
               class="file-input"
               required
             />
-            <small>Supported formats: JPG, PNG, JPEG</small>
+            <small style="color: #888">Supported formats: JPG, PNG, JPEG</small>
           </div>
 
           <button type="submit" class="submit-btn">Submit Report</button>

@@ -7,11 +7,15 @@ from functools import wraps
 auth_bp = Blueprint('auth', __name__)
 
 class User(UserMixin):
-    def __init__(self, id, name, email, role):
+    def __init__(self, id, name, email, role, reg_number, department, phone, password=None):
         self.id = id
         self.name = name
         self.email = email
         self.role = role
+        self.reg_number = reg_number
+        self.department = department 
+        self.phone = phone           
+        self.password = password
 
 def load_user(user_id):
     conn = get_db_connection()
@@ -20,7 +24,13 @@ def load_user(user_id):
     user = curr.fetchone()
     conn.close()
     if user:
-        return User(id=user['id'], name=user['name'], email=user['email'], role=user['role'])
+        return User(id=user['id'],
+                    name=user['name'],
+                    email=user['email'],
+                    role=user['role'],
+                    reg_number=user['reg_number'],
+                    department=user['department'],
+                    phone=user['phone'])
     return None
 
 def admin_required(f):

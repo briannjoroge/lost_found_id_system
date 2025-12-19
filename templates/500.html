@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Something went wrong</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body class="body-500">
+    <h1 class="title-500">It's not you, it's me</h1>
+
+    <p class="subtitle-500">
+      Something went wrong. I probably just need time to refresh.
+    </p>
+
+    <p class="detail-500">
+      Our server encountered an internal error. We have been notified and are
+      working to fix it.
+    </p>
+
+    <button class="refresh-btn" onclick="window.location.reload()">
+      <span class="icon">&#x21bb;</span>
+    </button>
+  </body>
+</html>
