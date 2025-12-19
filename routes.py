@@ -50,12 +50,14 @@ def lost():
             image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_name)
             image.save(image_path)
 
+            date_reported_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
             conn = get_db_connection()
             cursor = conn.cursor()
             cursor.execute('''
                 INSERT INTO lost_ids (user_id, student_name, reg_number, department, image_path, date_reported)
                 VALUES (?, ?, ?, ?, ?, ?)
-            ''', (current_user.id, student_name, reg_number, department, image_path, datetime.now()))
+            ''', (current_user.id, student_name, reg_number, department, image_path, date_reported_str))
             conn.commit()
             conn.close()
 
@@ -93,6 +95,8 @@ def found():
             image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_name)
             image.save(image_path)
 
+            date_found = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
             finder_id = current_user.id if current_user.is_authenticated else None
 
             conn = get_db_connection()
@@ -101,7 +105,7 @@ def found():
             cursor.execute('''
                 INSERT INTO found_ids (user_id, location_found, image_path, date_reported, status)
                 VALUES (?, ?, ?, ?, 'Unclaimed')
-            ''', (finder_id, location, image_path, datetime.now()))
+            ''', (finder_id, location, image_path, date_found))
 
             conn.commit()
             conn.close()
@@ -125,7 +129,38 @@ def found():
 @main_bp.route('/all-found')
 def all_found():
     items = get_found_ids(limit=100, offset=0)
+
     return render_template('view_all.html', items=items, title="All Found Student IDs", type="Found")
+
+@main_bp.route('/dashboard')
+@login_required
+def dashboard():
+    conn = get_db_connection()
+    
+    my_lost_items = conn.execute('''
+        SELECT * FROM lost_ids 
+        WHERE user_id = ? 
+        ORDER BY date_reported DESC
+    ''', (current_user.id,)).fetchall()
+    
+    my_claims = conn.execute('''
+        SELECT 
+            claims.id as claim_id,
+            claims.status as claim_status,
+            claims.date_claimed,
+            found_ids.image_path,
+            found_ids.location_found
+        FROM claims
+        JOIN found_ids ON claims.found_id = found_ids.id
+        WHERE claims.user_id = ?
+        ORDER BY claims.date_claimed DESC
+    ''', (current_user.id,)).fetchall()
+    
+    conn.close()
+    
+    return render_template('dashboard.html', 
+                         my_lost_items=my_lost_items, 
+                         my_claims=my_claims)
 
 @main_bp.route('/claim/<int:item_id>', methods=['POST'])
 @login_required

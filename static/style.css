@@ -165,6 +165,128 @@ nav {
   }
 }
 
+/* --- USER DASHBOARD STYLES --- */
+.dashboard-container {
+  margin-top: 40px;
+  margin-bottom: 60px;
+}
+
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.dashboard-header p {
+  color: #7f8c8d;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 40px;
+}
+
+.section-title {
+  border-bottom: 2px solid #bdc3c7;
+  padding-bottom: 15px;
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.item-row {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  background: white;
+  transition: background 0.2s;
+}
+
+.item-row:hover {
+  background: #fafafa;
+}
+
+.item-img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 5px;
+  margin-right: 15px;
+}
+
+.item-details {
+  flex-grow: 1;
+}
+
+.item-details small {
+  color: #7f8c8d;
+}
+
+.status-badge {
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  color: white;
+  font-weight: bold;
+}
+
+.status-found,
+.status-approved {
+  background: #2ecc71;
+}
+.status-lost,
+.status-rejected {
+  background: #e74c3c;
+}
+.status-pending {
+  background: #f39c12;
+}
+
+.empty-state-box {
+  color: #95a5a6;
+  padding: 20px;
+  text-align: center;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.dashboard-action {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.btn-dashboard {
+  padding: 10px 20px;
+  border-radius: 5px;
+  display: inline-block;
+  text-decoration: none;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.btn-primary-dash {
+  background: #34495e;
+  color: white;
+}
+
+.btn-primary-dash:hover {
+  background: #2c3e50;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-outline-dash {
+  border: 1px solid #34495e;
+  color: #34495e;
+}
+
+.btn-outline-dash:hover {
+  background: #34495e;
+  color: white;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 /* Header Section */
 header {
   text-align: center;
@@ -177,6 +299,7 @@ h1 {
   color: #2c3e50;
   margin-bottom: 0.5rem;
 }
+
 h2 {
   color: #2c3e50;
   border-bottom: 2px solid #1abc9c;
@@ -184,6 +307,7 @@ h2 {
   padding-bottom: 5px;
   margin-top: 2rem;
 }
+
 p {
   color: #666;
   max-width: 600px;
@@ -1031,6 +1155,7 @@ p {
   color: #7f8c8d;
   font-size: 0.9rem;
 }
+
 .text-small {
   color: #7f8c8d;
   font-size: 0.8rem;

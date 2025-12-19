@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Dashboard - MUT ID Tracker</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body>
+    {% include 'navbar.html' %}
+
+    <div class="container dashboard-container">
+      <div class="dashboard-header">
+        <h1>Hello, {{ current_user.name }}</h1>
+        <p>Track your lost ID and claims here.</p>
+      </div>
+
+      <div class="dashboard-grid">
+        <div class="dashboard-card">
+          <h2 class="section-title">My Lost Reports</h2>
+
+          {% if my_lost_items %}
+          <div class="items-list">
+            {% for item in my_lost_items %}
+            <div class="item-row">
+              <img src="/{{ item['image_path'] }}" class="item-img" />
+              <div class="item-details">
+                <strong>{{ item['student_name'] }}</strong><br />
+                <small>Reported on: {{ item['date_reported'] }}</small>
+              </div>
+
+              {% if item['status'] == 'Found' %}
+              <span class="status-badge status-found">Found!</span>
+              {% else %}
+              <span class="status-badge status-lost">Lost</span>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="empty-state-box">You haven't reported any lost items.</p>
+          {% endif %}
+
+          <div class="dashboard-action">
+            <a href="/lost" class="btn-dashboard btn-primary-dash">
+              + Report Lost ID
+            </a>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <h2 class="section-title">My Claims Status</h2>
+
+          {% if my_claims %}
+          <div class="items-list">
+            {% for claim in my_claims %}
+            <div class="item-row">
+              <img src="/{{ claim['image_path'] }}" class="item-img" />
+              <div class="item-details">
+                <strong>ID found at {{ claim['location_found'] }}</strong><br />
+                <small>Claimed on: {{ claim['date_claimed'] }}</small>
+              </div>
+
+              {% if claim['claim_status'] == 'Approved' %}
+              <span class="status-badge status-approved">Approved</span>
+              {% elif claim['claim_status'] == 'Rejected' %}
+              <span class="status-badge status-rejected">Rejected</span>
+              {% else %}
+              <span class="status-badge status-pending">Pending</span>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+          {% else %}
+          <p class="empty-state-box">
+            You haven't claimed any found items yet.
+          </p>
+          {% endif %}
+
+          <div class="dashboard-action">
+            <a href="/all-found" class="btn-dashboard btn-outline-dash">
+              Browse Found IDs
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}" defer></script>
+  </body>
+</html>
