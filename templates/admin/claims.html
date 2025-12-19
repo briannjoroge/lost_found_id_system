@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Manage Claims - Admin</title>
     <link
       rel="stylesheet"
@@ -9,21 +10,13 @@
     />
   </head>
   <body class="admin-body">
+    <div class="mobile-header">
+      <h3 style="margin: 0">🛡️ Admin Panel</h3>
+      <button class="admin-toggle" onclick="toggleSidebar()">☰</button>
+    </div>
+
     <div class="admin-container">
-      <div class="sidebar">
-        <div class="sidebar-header">
-          <h3>🛡️ Admin Panel</h3>
-        </div>
-        <div class="sidebar-menu">
-          <a href="/admin">📊 Dashboard</a>
-          <a href="/admin/claims" class="active">✋ Claims</a>
-          <a href="#">🔍 Manage Items</a>
-          <a href="#">👥 Users</a>
-        </div>
-        <div class="sidebar-footer">
-          <a href="/">🏠 Back to Website</a>
-        </div>
-      </div>
+      {% set active_page = 'claims' %} {% include 'admin/sidebar.html' %}
 
       <div class="content">
         <h1 class="dashboard-title">Claims Management</h1>
@@ -42,7 +35,12 @@
               </tr>
             </thead>
             <tbody>
-              {% for claim in claims %}
+              {% for claim in claims %} {% set safe_name = claim['student_name']
+              | replace("'", "\\'") %} {% set safe_reg = claim['reg_number'] |
+              replace("'", "\\'") %} {% set safe_dept = claim['department'] |
+              replace("'", "\\'") %} {% set safe_phone = claim['phone'] |
+              replace("'", "\\'") %}
+
               <tr>
                 <td>
                   <strong>{{ claim['student_name'] }}</strong><br />
@@ -54,7 +52,10 @@
 
                 <td>
                   <div class="claim-item-preview">
-                    <img src="/{{ claim['image_path'] }}" class="thumbnail" />
+                    <img
+                      src="/{{ claim['image_path'].replace('\\', '/') }}"
+                      class="thumbnail"
+                    />
                     <div>
                       <small>Found at:</small><br />
                       <strong>{{ claim['location_found'] }}</strong>
@@ -67,14 +68,14 @@
                   <button
                     class="btn btn-verify"
                     onclick="verifyClaim(
-                        {{ claim['claim_id'] }}, 
-                        '{{ claim['student_name'] }}', 
-                        '{{ claim['reg_number'] }}', 
-                        '{{ claim['department'] }}', 
-                        '{{ claim['phone'] }}', 
-                        '/{{ claim['image_path'].replace('\\', '/') }}',
-                        'Pending'
-                    )"
+            {{ claim['claim_id'] }}, 
+            '{{ safe_name }}', 
+            '{{ safe_reg }}', 
+            '{{ safe_dept }}', 
+            '{{ safe_phone }}', 
+            '/{{ claim['image_path'].replace('\\', '/') }}',
+            'Pending'
+        )"
                   >
                     🔍 Verify Claim
                   </button>
@@ -82,14 +83,14 @@
                   <button
                     class="btn btn-view"
                     onclick="verifyClaim(
-                        {{ claim['claim_id'] }}, 
-                        '{{ claim['student_name'] }}', 
-                        '{{ claim['reg_number'] }}', 
-                        '{{ claim['department'] }}', 
-                        '{{ claim['phone'] }}', 
-                        '/{{ claim['image_path'].replace('\\', '/') }}',
-                        '{{ claim['claim_status'] }}'
-                    )"
+            {{ claim['claim_id'] }}, 
+            '{{ safe_name }}', 
+            '{{ safe_reg }}', 
+            '{{ safe_dept }}', 
+            '{{ safe_phone }}', 
+            '/{{ claim['image_path'].replace('\\', '/') }}',
+            '{{ claim['claim_status'] }}'
+        )"
                   >
                     👁️ View Proof
                   </button>
@@ -116,6 +117,8 @@
         </div>
       </div>
     </div>
+
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
 
     <div id="proofModal" class="modal-overlay">
       <div class="modal-content">
@@ -173,6 +176,8 @@
       <img id="bigZoomImg" class="zoom-img" src="" />
       <span class="close-zoom" onclick="closeZoomOnly()">&times;</span>
     </div>
+
+    <script src="{{ url_for('static', filename='admin.js') }}"></script>
 
     <script>
       function verifyClaim(claimId, name, reg, dept, phone, imgSrc, status) {

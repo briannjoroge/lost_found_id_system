@@ -10,28 +10,13 @@
     />
   </head>
   <body class="admin-body">
+    <div class="mobile-header">
+      <h3 style="margin: 0">🛡️ Admin Panel</h3>
+      <button class="admin-toggle" onclick="toggleSidebar()">☰</button>
+    </div>
+
     <div class="admin-container">
-      <div class="sidebar">
-        <div class="sidebar-header">
-          <h3>🛡️ Admin Panel</h3>
-          <small>MUT ID Tracker</small>
-        </div>
-
-        <div class="sidebar-menu">
-          <a href="/admin" class="active">📊 Dashboard</a>
-          <a href="/admin/claims">
-            ✋ Claims
-            <span class="badge">{{ pending_claims }}</span>
-          </a>
-          <a href="#">🔍 Manage Items</a>
-          <a href="#">👥 Users</a>
-        </div>
-
-        <div class="sidebar-footer">
-          <a href="/">🏠 Back to Website</a>
-          <a href="/logout" class="logout-link">🚪 Logout</a>
-        </div>
-      </div>
+      {% set active_page = 'dashboard' %} {% include 'admin/sidebar.html' %}
 
       <div class="content">
         <h1 class="dashboard-title">Dashboard Overview</h1>
@@ -68,5 +53,9 @@
         </div>
       </div>
     </div>
+
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <script src="{{ url_for('static', filename='admin.js') }}"></script>
   </body>
 </html>

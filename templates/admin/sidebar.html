@@ -1,0 +1,34 @@
+<div class="sidebar" id="adminSidebar">
+  <div class="sidebar-header" style="position: relative">
+    <h3>🛡️ Admin Panel</h3>
+  </div>
+
+  <div class="sidebar-menu">
+    <a
+      href="/admin"
+      class="{{ 'active' if active_page == 'dashboard' else '' }}"
+    >
+      📊 Dashboard
+    </a>
+
+    <a
+      href="/admin/claims"
+      class="{{ 'active' if active_page == 'claims' else '' }}"
+    >
+      ✋ Claims
+      <span class="badge">{{ pending_claims if pending_claims else 0 }}</span>
+    </a>
+
+    <a href="#" class="{{ 'active' if active_page == 'items' else '' }}">
+      🔍 Manage Items
+    </a>
+    <a href="#" class="{{ 'active' if active_page == 'users' else '' }}">
+      👥 Users
+    </a>
+  </div>
+
+  <div class="sidebar-footer">
+    <a href="/">🏠 Back to Website</a>
+    <a href="/logout" class="logout-link">🚪 Logout</a>
+  </div>
+</div>
