@@ -44,7 +44,7 @@ def init_db():
             location_found TEXT NOT NULL,
             image_path TEXT NOT NULL,
             date_reported DATETIME,
-            status TEXT DEFAULT 'Found',
+            status TEXT DEFAULT 'Unclaimed',
             claimed_by_user_id INTEGER,
             FOREIGN KEY(user_id) REFERENCES users(id)
         )
@@ -57,6 +57,7 @@ def init_db():
             user_id INTEGER NOT NULL,
             claim_date DATETIME DEFAULT CURRENT_TIMESTAMP,
             status TEXT DEFAULT 'Pending',
+            date_claimed TEXT DEFAULT CURRENT_TIMESTAMP,
             admin_notes TEXT,
             FOREIGN KEY(found_id) REFERENCES found_ids(id),
             FOREIGN KEY(user_id) REFERENCES users(id)
@@ -74,9 +75,11 @@ def get_lost_ids(limit=8, offset=0):
     cursor.execute("""
         SELECT student_name, reg_number, department, image_path, date_reported 
         FROM lost_ids 
+        WHERE status = 'Lost'
         ORDER BY date_reported DESC
         LIMIT ? OFFSET ?
     """, (limit, offset))
+
     records = cursor.fetchall()
     conn.close()
     return [dict(row) for row in records]
@@ -88,9 +91,11 @@ def get_found_ids(limit=8, offset=0):
     cursor.execute("""
         SELECT id, location_found, image_path, date_reported 
         FROM found_ids 
+        WHERE status = 'Unclaimed'
         ORDER BY date_reported DESC
         LIMIT ? OFFSET ?
     """, (limit, offset))
+
     records = cursor.fetchall()
     conn.close()
     return [dict(row) for row in records]

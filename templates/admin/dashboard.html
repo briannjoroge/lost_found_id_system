@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - MUT ID Tracker</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body class="admin-body">
+    <div class="admin-container">
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <h3>🛡️ Admin Panel</h3>
+          <small>MUT ID Tracker</small>
+        </div>
+
+        <div class="sidebar-menu">
+          <a href="/admin" class="active">📊 Dashboard</a>
+          <a href="/admin/claims">
+            ✋ Claims
+            <span class="badge">{{ pending_claims }}</span>
+          </a>
+          <a href="#">🔍 Manage Items</a>
+          <a href="#">👥 Users</a>
+        </div>
+
+        <div class="sidebar-footer">
+          <a href="/">🏠 Back to Website</a>
+          <a href="/logout" class="logout-link">🚪 Logout</a>
+        </div>
+      </div>
+
+      <div class="content">
+        <h1 class="dashboard-title">Dashboard Overview</h1>
+        <p class="dashboard-subtitle">
+          Welcome back, Admin. Here is what's happening today.
+        </p>
+
+        <div class="stats-grid">
+          <div class="stat-card border-red">
+            <div class="stat-info">
+              <h3>{{ total_lost }}</h3>
+              <p>Lost IDs Reported</p>
+            </div>
+          </div>
+
+          <div class="stat-card border-green">
+            <div class="stat-info">
+              <h3>{{ total_found }}</h3>
+              <p>Found IDs</p>
+            </div>
+          </div>
+
+          <div class="stat-card border-orange">
+            <div class="stat-info">
+              <h3>{{ pending_claims }}</h3>
+              <p>Pending Claims</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="placeholder-card">
+          <h2>Recent Activity</h2>
+          <p>The claims management table will appear here in the next phase.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

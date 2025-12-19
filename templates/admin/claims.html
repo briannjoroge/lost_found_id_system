@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Manage Claims - Admin</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body class="admin-body">
+    <div class="admin-container">
+      <div class="sidebar">
+        <div class="sidebar-header">
+          <h3>🛡️ Admin Panel</h3>
+        </div>
+        <div class="sidebar-menu">
+          <a href="/admin">📊 Dashboard</a>
+          <a href="/admin/claims" class="active">✋ Claims</a>
+          <a href="#">🔍 Manage Items</a>
+          <a href="#">👥 Users</a>
+        </div>
+        <div class="sidebar-footer">
+          <a href="/">🏠 Back to Website</a>
+        </div>
+      </div>
+
+      <div class="content">
+        <h1 class="dashboard-title">Claims Management</h1>
+        <p class="dashboard-subtitle">
+          Verify students before handing over IDs.
+        </p>
+
+        <div class="table-card">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Student Details</th>
+                <th>ID Claimed</th>
+                <th>Verify</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for claim in claims %}
+              <tr>
+                <td>
+                  <strong>{{ claim['student_name'] }}</strong><br />
+                  <span class="text-muted">{{ claim['reg_number'] }}</span
+                  ><br />
+                  <span class="text-small">📞 {{ claim['phone'] }}</span><br />
+                  <span class="text-small">🏫 {{ claim['department'] }}</span>
+                </td>
+
+                <td>
+                  <div class="claim-item-preview">
+                    <img src="/{{ claim['image_path'] }}" class="thumbnail" />
+                    <div>
+                      <small>Found at:</small><br />
+                      <strong>{{ claim['location_found'] }}</strong>
+                    </div>
+                  </div>
+                </td>
+
+                <td>
+                  {% if claim['claim_status'] == 'Pending' %}
+                  <button
+                    class="btn btn-verify"
+                    onclick="verifyClaim(
+                        {{ claim['claim_id'] }}, 
+                        '{{ claim['student_name'] }}', 
+                        '{{ claim['reg_number'] }}', 
+                        '{{ claim['department'] }}', 
+                        '{{ claim['phone'] }}', 
+                        '/{{ claim['image_path'].replace('\\', '/') }}',
+                        'Pending'
+                    )"
+                  >
+                    🔍 Verify Claim
+                  </button>
+                  {% else %}
+                  <button
+                    class="btn btn-view"
+                    onclick="verifyClaim(
+                        {{ claim['claim_id'] }}, 
+                        '{{ claim['student_name'] }}', 
+                        '{{ claim['reg_number'] }}', 
+                        '{{ claim['department'] }}', 
+                        '{{ claim['phone'] }}', 
+                        '/{{ claim['image_path'].replace('\\', '/') }}',
+                        '{{ claim['claim_status'] }}'
+                    )"
+                  >
+                    👁️ View Proof
+                  </button>
+                  {% endif %}
+                </td>
+
+                <td>
+                  {% if claim['claim_status'] == 'Pending' %}
+                  <span class="badge badge-pending">Pending</span>
+                  {% elif claim['claim_status'] == 'Approved' %}
+                  <span class="badge badge-approved">Approved</span>
+                  {% else %}
+                  <span class="badge badge-rejected">Rejected</span>
+                  {% endif %}
+                </td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="4" class="empty-state">No claims found.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="proofModal" class="modal-overlay">
+      <div class="modal-content">
+        <span onclick="closeProof()" class="close-modal">&times;</span>
+
+        <div class="modal-header">
+          <h2>🛡️ Verify Claim</h2>
+        </div>
+
+        <div class="modal-body-grid">
+          <div class="modal-section">
+            <h3>👤 Student Details</h3>
+            <div class="info-box">
+              <p><strong>Name:</strong> <span id="modalName"></span></p>
+              <p class="highlight-reg">
+                <strong>Reg No:</strong> <span id="modalReg"></span>
+              </p>
+              <p><strong>Dept:</strong> <span id="modalDept"></span></p>
+              <p><strong>Phone:</strong> <span id="modalPhone"></span></p>
+            </div>
+            <p class="instruction-text">
+              <span class="emoji-lg">👉</span> Compare this Reg No with the ID
+              Card image on the right.
+            </p>
+          </div>
+
+          <div class="modal-section center-text">
+            <h3>🆔 Found Item</h3>
+            <img
+              id="modalImg"
+              class="zoomable-preview"
+              onclick="toggleZoom(this)"
+              src=""
+            />
+            <p class="text-muted text-small">(Click image to zoom)</p>
+          </div>
+        </div>
+
+        <div id="modalActions" class="modal-actions">
+          <form id="rejectForm" method="POST">
+            <button type="submit" class="btn btn-reject">✕ Reject</button>
+          </form>
+
+          <form id="approveForm" method="POST">
+            <button type="submit" class="btn btn-approve">
+              ✓ Approve & Notify
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="zoomContainer" class="zoom-viewer">
+      <div class="zoom-backdrop" onclick="closeZoomOnly()"></div>
+      <img id="bigZoomImg" class="zoom-img" src="" />
+      <span class="close-zoom" onclick="closeZoomOnly()">&times;</span>
+    </div>
+
+    <script>
+      function verifyClaim(claimId, name, reg, dept, phone, imgSrc, status) {
+        document.getElementById("modalName").innerText = name;
+        document.getElementById("modalReg").innerText = reg;
+        document.getElementById("modalDept").innerText = dept;
+        document.getElementById("modalPhone").innerText = phone;
+        document.getElementById("modalImg").src = imgSrc;
+
+        document.getElementById("approveForm").action =
+          "/admin/claim/approve/" + claimId;
+        document.getElementById("rejectForm").action =
+          "/admin/claim/reject/" + claimId;
+
+        const actionDiv = document.getElementById("modalActions");
+        if (status === "Pending") {
+          actionDiv.style.display = "flex";
+        } else {
+          actionDiv.style.display = "none";
+        }
+        document.getElementById("proofModal").style.display = "block";
+      }
+
+      function toggleZoom(imgElement) {
+        document.getElementById("bigZoomImg").src = imgElement.src;
+        document.getElementById("zoomContainer").style.display = "block";
+      }
+
+      function closeZoomOnly() {
+        document.getElementById("zoomContainer").style.display = "none";
+        document.getElementById("bigZoomImg").src = "";
+      }
+
+      function closeProof() {
+        document.getElementById("proofModal").style.display = "none";
+      }
+
+      window.onclick = function (event) {
+        if (event.target == document.getElementById("proofModal")) {
+          closeProof();
+        }
+      };
+    </script>
+  </body>
+</html>

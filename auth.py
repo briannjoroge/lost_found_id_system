@@ -1,7 +1,8 @@
-from flask import Blueprint, render_template, request, redirect, flash, url_for
+from flask import Blueprint, render_template, request, redirect, flash, url_for, abort
 from flask_login import current_user, login_user, logout_user, login_required, UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from db import get_db_connection
+from functools import wraps
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -21,6 +22,14 @@ def load_user(user_id):
     if user:
         return User(id=user['id'], name=user['name'], email=user['email'], role=user['role'])
     return None
+
+def admin_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not current_user.is_authenticated or current_user.role != 'admin':
+            abort(403)
+        return f(*args, **kwargs)
+    return decorated_function
 
 # --- Routes ---
 @auth_bp.route('/register', methods=['GET', 'POST'])
@@ -70,7 +79,6 @@ def profile():
     if request.method == 'POST':
         action = request.form.get('action') 
 
-        # --- ACTION 1: UPDATE INFO ---
         if action == 'update_info':
             new_name = request.form['name']
             new_phone = request.form['phone']
@@ -85,7 +93,6 @@ def profile():
             conn.close()
             return redirect(url_for('main.home'))
         
-        # --- ACTION 2: CHANGE PASSWORD ---
         elif action == 'change_password':
             old_pass = request.form['old_password']
             new_pass = request.form['new_password']
