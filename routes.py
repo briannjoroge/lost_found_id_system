@@ -248,11 +248,15 @@ def admin_claims():
         FROM claims
         JOIN users ON claims.user_id = users.id
         JOIN found_ids ON claims.found_id = found_ids.id
-        ORDER BY claims.date_claimed DESC
+        ORDER BY 
+            CASE WHEN claims.status = 'Pending' THEN 0 ELSE 1 END,
+            claims.date_claimed DESC
     ''').fetchall()
+
+    pending_claims = conn.execute('SELECT COUNT(*) FROM claims WHERE status = "Pending"').fetchone()[0]
     
     conn.close()
-    return render_template('admin/claims.html', claims=claims)
+    return render_template('admin/claims.html', claims=claims, pending_claims=pending_claims)
 
 @main_bp.route('/admin/claim/approve/<int:claim_id>', methods=['POST'])
 @login_required
@@ -304,10 +308,12 @@ def admin_items():
     lost_items = conn.execute('SELECT *, "Lost" as type FROM lost_ids ORDER BY date_reported DESC').fetchall()
     
     found_items = conn.execute('SELECT *, "Found" as type FROM found_ids ORDER BY date_reported DESC').fetchall()
+
+    pending_claims = conn.execute('SELECT COUNT(*) FROM claims WHERE status = "Pending"').fetchone()[0]
     
     conn.close()
     
-    return render_template('admin/items.html', lost_items=lost_items, found_items=found_items)
+    return render_template('admin/items.html', lost_items=lost_items, found_items=found_items, pending_claims=pending_claims)
 
 @main_bp.route('/admin/items/delete/<string:item_type>/<int:item_id>', methods=['POST'])
 @login_required
@@ -326,6 +332,7 @@ def delete_item(item_type, item_id):
     conn.close()
     
     flash('Item deleted successfully.', 'success')
+
     return redirect(url_for('main.admin_items'))
 
 # --- MANAGE USERS ---
@@ -334,9 +341,14 @@ def delete_item(item_type, item_id):
 @admin_required
 def admin_users():
     conn = get_db_connection()
+
     users = conn.execute('SELECT * FROM users WHERE role != "admin" ORDER BY is_deleted ASC, name ASC').fetchall()
+
+    pending_claims = conn.execute('SELECT COUNT(*) FROM claims WHERE status = "Pending"').fetchone()[0]
+
     conn.close()
-    return render_template('admin/users.html', users=users)
+
+    return render_template('admin/users.html', users=users, pending_claims=pending_claims)
 
 @main_bp.route('/admin/users/delete/<int:user_id>', methods=['POST'])
 @login_required
