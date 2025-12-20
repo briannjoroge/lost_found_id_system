@@ -8,6 +8,7 @@
     "linejoin",
     "lostfound",
     "onclick",
+    "onsubmit",
     "stylesheet",
     "zoomable"
   ]

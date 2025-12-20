@@ -5,30 +5,37 @@
 
   <div class="sidebar-menu">
     <a
-      href="/admin"
+      href="{{ url_for('main.admin_dashboard') }}"
       class="{{ 'active' if active_page == 'dashboard' else '' }}"
     >
       📊 Dashboard
     </a>
 
     <a
-      href="/admin/claims"
+      href="{{ url_for('main.admin_claims') }}"
       class="{{ 'active' if active_page == 'claims' else '' }}"
     >
       ✋ Claims
-      <span class="badge">{{ pending_claims if pending_claims else 0 }}</span>
+      <span class="badge">{{ pending_claims|default(0) }}</span>
     </a>
 
-    <a href="#" class="{{ 'active' if active_page == 'items' else '' }}">
+    <a
+      href="{{ url_for('main.admin_items') }}"
+      class="{{ 'active' if active_page == 'items' else '' }}"
+    >
       🔍 Manage Items
     </a>
-    <a href="#" class="{{ 'active' if active_page == 'users' else '' }}">
+
+    <a
+      href="{{ url_for('main.admin_users') }}"
+      class="{{ 'active' if active_page == 'users' else '' }}"
+    >
       👥 Users
     </a>
   </div>
 
   <div class="sidebar-footer">
-    <a href="/">🏠 Back to Website</a>
-    <a href="/logout" class="logout-link">🚪 Logout</a>
+    <a href="{{ url_for('main.home') }}">🏠 Back to Website</a>
+    <a href="{{ url_for('auth.logout') }}" class="logout-link">🚪 Logout</a>
   </div>
 </div>

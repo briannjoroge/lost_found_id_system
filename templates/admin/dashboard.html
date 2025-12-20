@@ -47,9 +47,50 @@
           </div>
         </div>
 
-        <div class="placeholder-card">
+        <div class="dashboard-card">
           <h2>Recent Activity</h2>
-          <p>The claims management table will appear here in the next phase.</p>
+
+          {% if recent_claims %}
+
+          <div class="table-responsive">
+            <table class="activity-table">
+              <thead>
+                <tr>
+                  <th>ID Photo</th>
+                  <th>Student</th>
+                  <th>Date Claimed</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for claim in recent_claims %}
+                <tr>
+                  <td>
+                    <img
+                      src="/{{ claim.image_path.replace('\\', '/') }}"
+                      alt="ID Pic"
+                      class="item-thumbnail"
+                    />
+                  </td>
+                  <td class="student-name">{{ claim.student_name }}</td>
+                  <td class="claim-date">{{ claim.date_claimed }}</td>
+                  <td>
+                    <a
+                      href="{{ url_for('main.admin_claims') }}"
+                      class="btn-review"
+                    >
+                      Review
+                    </a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+
+          {% else %}
+          <p class="no-data-msg">No pending claims to review right now.</p>
+          {% endif %}
         </div>
       </div>
     </div>

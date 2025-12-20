@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Users - Admin Panel</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+  </head>
+  <body class="admin-body">
+    <div class="mobile-header">
+      <h3 style="margin: 0">🛡️ Admin Panel</h3>
+      <button class="admin-toggle" onclick="toggleSidebar()">☰</button>
+    </div>
+
+    <div class="admin-container">
+      {% set active_page = 'users' %} {% include 'admin/sidebar.html' %}
+
+      <div class="content">
+        <h1>Manage Users</h1>
+
+        <div class="dashboard-card">
+          <h3 style="color: #2c3e50; margin-top: 0; margin-bottom: 15px">
+            Registered Students
+          </h3>
+
+          <div class="table-responsive">
+            <table class="activity-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Reg Number</th>
+                  <th>Department</th>
+                  <th>Phone</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for user in users %}
+                <tr
+                  class="{{ 'user-row-inactive' if user.is_deleted else '' }}"
+                >
+                  <td class="student-name">
+                    <i
+                      class="fas fa-user-circle"
+                      style="color: #bdc3c7; margin-right: 5px"
+                    ></i>
+                    {{ user.name }} {% if user.is_deleted %}
+                    <span class="inactive-text">(Inactive)</span>
+                    {% endif %}
+                  </td>
+                  <td>{{ user.reg_number }}</td>
+                  <td>{{ user.department }}</td>
+                  <td>{{ user.phone }}</td>
+                  <td>
+                    {% if user.is_deleted %}
+                    <form
+                      action="{{ url_for('main.restore_user', user_id=user.id) }}"
+                      method="POST"
+                    >
+                      <button type="submit" class="btn-restore">
+                        <i class="fas fa-undo"></i> Restore
+                      </button>
+                    </form>
+                    {% else %}
+                    <form
+                      action="{{ url_for('main.delete_user', user_id=user.id) }}"
+                      method="POST"
+                      onsubmit="return confirm('Are you sure you want to deactivate this user?');"
+                    >
+                      <button type="submit" class="btn-delete">
+                        <i class="fas fa-ban"></i> Deactivate
+                      </button>
+                    </form>
+                    {% endif %}
+                  </td>
+                </tr>
+                {% else %}
+                <tr>
+                  <td
+                    colspan="5"
+                    style="text-align: center; padding: 20px; color: #7f8c8d"
+                  >
+                    No registered users found.
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <script src="{{ url_for('static', filename='admin.js') }}"></script>
+  </body>
+</html>

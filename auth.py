@@ -7,7 +7,7 @@ from functools import wraps
 auth_bp = Blueprint('auth', __name__)
 
 class User(UserMixin):
-    def __init__(self, id, name, email, role, reg_number, department, phone, password=None):
+    def __init__(self, id, name, email, role, reg_number=None, department=None, phone=None, password=None):
         self.id = id
         self.name = name
         self.email = email
@@ -139,8 +139,22 @@ def login():
         user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
         conn.close()
         
-        if user and check_password_hash(user['password_hash'], password):            
-            user_obj = User(id=user['id'], name=user['name'], email=user['email'], role=user['role'])
+        if user and check_password_hash(user['password_hash'], password):
+            
+            if user['is_deleted']:
+                flash('Your account has been deactivated. Please contact admin.', 'error')
+                return redirect(url_for('auth.login'))
+
+            user_obj = User(
+                id=user['id'], 
+                name=user['name'], 
+                email=user['email'], 
+                role=user['role'],
+                reg_number=user['reg_number'],
+                department=user['department'],
+                phone=user['phone']
+            )
+            
             login_user(user_obj)
             
             flash('Logged in successfully!', 'success')

@@ -194,6 +194,7 @@ def claim_item(item_id):
     flash('Claim submitted! Visit the admin office for verification.', 'success')
     return redirect(url_for('main.all_found'))
 
+# --- ADMIN Routes ---
 @main_bp.route('/admin')
 @login_required
 @admin_required
@@ -203,13 +204,28 @@ def admin_dashboard():
     total_lost = conn.execute('SELECT COUNT(*) FROM lost_ids').fetchone()[0]
     total_found = conn.execute('SELECT COUNT(*) FROM found_ids').fetchone()[0]
     pending_claims = conn.execute('SELECT COUNT(*) FROM claims WHERE status = "Pending"').fetchone()[0]
+
+    recent_claims = conn.execute('''
+        SELECT 
+            claims.id as claim_id,
+            users.name as student_name,
+            found_ids.image_path,
+            claims.date_claimed
+        FROM claims
+        JOIN users ON claims.user_id = users.id
+        JOIN found_ids ON claims.found_id = found_ids.id
+        WHERE claims.status = 'Pending'
+        ORDER BY claims.date_claimed DESC
+        LIMIT 5
+    ''').fetchall()
     
     conn.close()
     
     return render_template('admin/dashboard.html', 
                            total_lost=total_lost, 
                            total_found=total_found, 
-                           pending_claims=pending_claims)
+                           pending_claims=pending_claims,
+                           recent_claims=recent_claims)
 
 # --- ADMIN CLAIMS MANAGEMENT ---
 @main_bp.route('/admin/claims')
@@ -277,6 +293,87 @@ def reject_claim(claim_id):
     conn.close()
     flash('Claim rejected.', 'error')
     return redirect(url_for('main.admin_claims'))
+
+# --- MANAGE ITEMS ---
+@main_bp.route('/admin/items')
+@login_required
+@admin_required
+def admin_items():
+    conn = get_db_connection()
+    
+    lost_items = conn.execute('SELECT *, "Lost" as type FROM lost_ids ORDER BY date_reported DESC').fetchall()
+    
+    found_items = conn.execute('SELECT *, "Found" as type FROM found_ids ORDER BY date_reported DESC').fetchall()
+    
+    conn.close()
+    
+    return render_template('admin/items.html', lost_items=lost_items, found_items=found_items)
+
+@main_bp.route('/admin/items/delete/<string:item_type>/<int:item_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_item(item_type, item_id):
+    conn = get_db_connection()
+    
+    if item_type == 'Lost':
+        conn.execute('DELETE FROM lost_ids WHERE id = ?', (item_id,))
+    elif item_type == 'Found':
+
+        conn.execute('DELETE FROM claims WHERE found_id = ?', (item_id,))
+        conn.execute('DELETE FROM found_ids WHERE id = ?', (item_id,))
+        
+    conn.commit()
+    conn.close()
+    
+    flash('Item deleted successfully.', 'success')
+    return redirect(url_for('main.admin_items'))
+
+# --- MANAGE USERS ---
+@main_bp.route('/admin/users')
+@login_required
+@admin_required
+def admin_users():
+    conn = get_db_connection()
+    users = conn.execute('SELECT * FROM users WHERE role != "admin" ORDER BY is_deleted ASC, name ASC').fetchall()
+    conn.close()
+    return render_template('admin/users.html', users=users)
+
+@main_bp.route('/admin/users/delete/<int:user_id>', methods=['POST'])
+@login_required
+@admin_required
+def delete_user(user_id):
+    conn = get_db_connection()
+    
+    user = conn.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()
+    
+    if user:
+        conn.execute('UPDATE users SET is_deleted = 1 WHERE id = ?', (user_id,))
+        conn.commit()
+        
+        flash(f'User "{user["name"]}" has been deactivated.', 'success')
+    else:
+        flash('User not found.', 'error')
+        
+    conn.close()
+    return redirect(url_for('main.admin_users'))
+
+@main_bp.route('/admin/users/restore/<int:user_id>', methods=['POST'])
+@login_required
+@admin_required
+def restore_user(user_id):
+    conn = get_db_connection()
+    
+    user = conn.execute('SELECT * FROM users WHERE id = ?', (user_id,)).fetchone()
+    
+    if user:
+        conn.execute('UPDATE users SET is_deleted = 0 WHERE id = ?', (user_id,))
+        conn.commit()
+        flash(f'User "{user["name"]}" has been restored.', 'success')
+    else:
+        flash('User not found.', 'error')
+        
+    conn.close()
+    return redirect(url_for('main.admin_users'))
 
 # --- ERROR HANDLERS ---
 @main_bp.app_errorhandler(404)

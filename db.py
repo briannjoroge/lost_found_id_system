@@ -19,7 +19,8 @@ def init_db():
             reg_number TEXT UNIQUE NOT NULL,
             department TEXT NOT NULL,
             password_hash TEXT NOT NULL,
-            role TEXT DEFAULT 'student' 
+            role TEXT DEFAULT 'student',
+            is_deleted BOOLEAN DEFAULT 0 
         )
     ''')
 
