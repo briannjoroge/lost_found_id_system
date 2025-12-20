@@ -43,7 +43,34 @@ window.onload = function () {
   }
 };
 
-// --- 4. Modal for Student ID Details ---
+// --- 4. Back to Top Button ---
+const backToTopBtn = document.getElementById("backToTop");
+
+window.onscroll = function () {
+  scrollFunction();
+};
+
+function scrollFunction() {
+  if (
+    document.body.scrollTop > 300 ||
+    document.documentElement.scrollTop > 300
+  ) {
+    backToTopBtn.style.display = "block";
+  } else {
+    backToTopBtn.style.display = "none";
+  }
+}
+
+if (backToTopBtn) {
+  backToTopBtn.addEventListener("click", function () {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  });
+}
+
+// --- 5. Modal for Student ID Details ---
 const modal = document.getElementById("idModal");
 const modalTitle = document.getElementById("modalTitle");
 const modalImg = document.getElementById("modalImg");
