@@ -123,17 +123,17 @@ UPDATE users SET role = 'admin' WHERE email = 'user@gmail.com';
 
 ### 📱 Student Interface
 
-**Home Page**
+**1. Home Page**
 The landing page where students can view lost or found items.
-<img src="screenshots/home_page.png" alt="Home Page" width="800">
+<img src="screenshots/home_page.PNG" alt="Home Page" width="800">
 
 **2. Claiming an Item**
 Students can view details of a found ID and submit a claim request if it belongs to them.
-<img src="screenshots/claim_id.png" alt="Claim Process" width="800">
+<img src="screenshots/claim_id.PNG" alt="Claim Process" width="800">
 
 **3. Student Dashboard (Status Tracking)**
 A personal dashboard where students can track the status of their lost reports and see if their claims are **Pending**, **Approved**, or **Rejected**.
-<img src="screenshots/student_dashboard.png" alt="Student Dashboard" width="800">
+<img src="screenshots/student_dashboard.PNG" alt="Student Dashboard" width="800">
 
 ---
 
@@ -141,15 +141,15 @@ A personal dashboard where students can track the status of their lost reports a
 
 **1. Restricted Admin Login**
 A secure, separate login portal with password visibility toggle.
-<img src="screenshots/admin_login.png" alt="Admin Login" width="800">
+<img src="screenshots/admin_login.PNG" alt="Admin Login" width="800">
 
 **2. Analytics Dashboard**
 Real-time overview of lost/found statistics and quick access to recent claims.
-<img src="screenshots/admin_dashboard.png" alt="Admin Dashboard" width="800">
+<img src="screenshots/admin_dashboard.PNG" alt="Admin Dashboard" width="800">
 
 **3. Claim Verification**
 Side-by-side comparison of the claimant's details vs. the found ID card for easy verification.
-<img src="screenshots/manage_claims.png" alt="Manage Claims" width="800">
+<img src="screenshots/manage_claims.PNG" alt="Manage Claims" width="800">
 
 ## 🤝 Contributing
 
