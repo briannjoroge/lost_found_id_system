@@ -19,3 +19,7 @@ env/
 # Environment Variables
 .env
 
+# Exception: Do not ignore documentation screenshots
+!screenshots/
+!screenshots/*.png
+!screenshots/*.jpg
