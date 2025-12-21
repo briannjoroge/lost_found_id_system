@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Access - MUT ID Tracker</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+  </head>
+  <body class="admin-login-body">
+    <div class="admin-login-card">
+      <h2>🛡️ Restricted Access</h2>
+
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %} {% for category, message in messages %}
+      <div class="alert {{ category }}">{{ message }}</div>
+      {% endfor %} {% endif %} {% endwith %}
+
+      <form method="POST">
+        <input
+          type="email"
+          name="email"
+          class="admin-input"
+          placeholder="Admin Email"
+          required
+        />
+
+        <div class="admin-password-container">
+          <input
+            type="password"
+            name="password"
+            id="password"
+            class="admin-input"
+            placeholder="*****"
+            required
+          />
+          <span
+            class="password-toggle-icon"
+            onclick="togglePassword('password', this)"
+            >👁️</span
+          >
+        </div>
+        <button type="submit" class="btn-admin">Enter Panel</button>
+      </form>
+
+      <a href="{{ url_for('main.home') }}" class="back-link"
+        >← Back to Website</a
+      >
+    </div>
+
+    <script src="{{ url_for('static', filename='admin.js') }}"></script>
+  </body>
+</html>

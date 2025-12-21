@@ -36,7 +36,10 @@ def load_user(user_id):
 def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or current_user.role != 'admin':
+        if not current_user.is_authenticated:
+            return redirect(url_for('auth.admin_login'))
+        
+        if current_user.role != 'admin':
             abort(403)
         return f(*args, **kwargs)
     return decorated_function
@@ -172,3 +175,38 @@ def logout():
     logout_user()
     flash('You have been logged out.', 'info')
     return redirect(url_for('auth.login'))
+
+# --- ADMIN LOGIN ROUTE ---
+@auth_bp.route('/admin/login', methods=['GET', 'POST'])
+def admin_login():
+    if current_user.is_authenticated and current_user.role == 'admin':
+        return redirect(url_for('main.admin_dashboard'))
+
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+        
+        conn = get_db_connection()
+        user = conn.execute('SELECT * FROM users WHERE email = ?', (email,)).fetchone()
+        conn.close()
+        
+        if user and check_password_hash(user['password_hash'], password):
+            if user['role'] != 'admin':
+                flash('Access Denied: You are not an administrator.', 'error')
+                return redirect(url_for('auth.admin_login'))
+
+            user_obj = User(
+                id=user['id'], 
+                name=user['name'], 
+                email=user['email'], 
+                role=user['role'],
+                reg_number=user['reg_number'], 
+                department=user['department'], 
+                phone=user['phone']
+            )
+            login_user(user_obj)
+            return redirect(url_for('main.admin_dashboard'))
+        else:
+            flash('Invalid admin credentials.', 'error')
+            
+    return render_template('admin/login.html')

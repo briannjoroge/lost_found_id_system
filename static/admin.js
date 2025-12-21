@@ -1,4 +1,17 @@
-// --- 1. Shared Admin Sidebar Logic ---
+// --- 1. Toggle Password Visibility ---
+function togglePassword(inputId, icon) {
+  const input = document.getElementById(inputId);
+
+  if (input.type === "password") {
+    input.type = "text";
+    icon.textContent = "❌";
+  } else {
+    input.type = "password";
+    icon.textContent = "👁️";
+  }
+}
+
+// --- 2. Shared Admin Sidebar Logic ---
 function toggleSidebar() {
   const sidebar = document.getElementById("adminSidebar");
   const overlay = document.querySelector(".sidebar-overlay");
@@ -12,7 +25,7 @@ function toggleSidebar() {
   }
 }
 
-// --- 2. Back to Top Button ---
+// --- 3. Back to Top Button ---
 const backToTopBtn = document.getElementById("backToTop");
 
 window.onscroll = function () {

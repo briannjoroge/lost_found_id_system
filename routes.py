@@ -196,7 +196,6 @@ def claim_item(item_id):
 
 # --- ADMIN Routes ---
 @main_bp.route('/admin')
-@login_required
 @admin_required
 def admin_dashboard():
     conn = get_db_connection()
@@ -229,7 +228,6 @@ def admin_dashboard():
 
 # --- ADMIN CLAIMS MANAGEMENT ---
 @main_bp.route('/admin/claims')
-@login_required
 @admin_required
 def admin_claims():
     conn = get_db_connection()
@@ -259,7 +257,6 @@ def admin_claims():
     return render_template('admin/claims.html', claims=claims, pending_claims=pending_claims)
 
 @main_bp.route('/admin/claim/approve/<int:claim_id>', methods=['POST'])
-@login_required
 @admin_required
 def approve_claim(claim_id):
     conn = get_db_connection()
@@ -288,7 +285,6 @@ def approve_claim(claim_id):
     return redirect(url_for('main.admin_claims'))
 
 @main_bp.route('/admin/claim/reject/<int:claim_id>', methods=['POST'])
-@login_required
 @admin_required
 def reject_claim(claim_id):
     conn = get_db_connection()
@@ -300,7 +296,6 @@ def reject_claim(claim_id):
 
 # --- MANAGE ITEMS ---
 @main_bp.route('/admin/items')
-@login_required
 @admin_required
 def admin_items():
     conn = get_db_connection()
@@ -316,7 +311,6 @@ def admin_items():
     return render_template('admin/items.html', lost_items=lost_items, found_items=found_items, pending_claims=pending_claims)
 
 @main_bp.route('/admin/items/delete/<string:item_type>/<int:item_id>', methods=['POST'])
-@login_required
 @admin_required
 def delete_item(item_type, item_id):
     conn = get_db_connection()
@@ -337,7 +331,6 @@ def delete_item(item_type, item_id):
 
 # --- MANAGE USERS ---
 @main_bp.route('/admin/users')
-@login_required
 @admin_required
 def admin_users():
     conn = get_db_connection()
@@ -351,7 +344,6 @@ def admin_users():
     return render_template('admin/users.html', users=users, pending_claims=pending_claims)
 
 @main_bp.route('/admin/users/delete/<int:user_id>', methods=['POST'])
-@login_required
 @admin_required
 def delete_user(user_id):
     conn = get_db_connection()
@@ -370,7 +362,6 @@ def delete_user(user_id):
     return redirect(url_for('main.admin_users'))
 
 @main_bp.route('/admin/users/restore/<int:user_id>', methods=['POST'])
-@login_required
 @admin_required
 def restore_user(user_id):
     conn = get_db_connection()
