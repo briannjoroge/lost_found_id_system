@@ -45,6 +45,9 @@ def init_db():
             location_found TEXT NOT NULL,
             image_path TEXT NOT NULL,
             date_reported DATETIME,
+            extracted_name TEXT,
+            extracted_reg_number TEXT,
+            extracted_department TEXT,
             status TEXT DEFAULT 'Unclaimed',
             claimed_by_user_id INTEGER,
             FOREIGN KEY(user_id) REFERENCES users(id)
