@@ -34,6 +34,7 @@ def lost():
         student_name = request.form['student_name']
         reg_number = request.form['reg_number']
         department = request.form['department']
+        phone_number = request.form['phone_number']
         
         if 'id_image' not in request.files:
             flash('No file part', 'error')
@@ -55,10 +56,14 @@ def lost():
 
             conn = get_db_connection()
             cursor = conn.cursor()
+
             cursor.execute('''
-                INSERT INTO lost_ids (user_id, student_name, reg_number, department, image_path, date_reported)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', (current_user.id, student_name, reg_number, department, image_path, date_reported_str))
+                INSERT INTO lost_ids (user_id, student_name, reg_number, department,
+                phone_number, image_path, date_reported)
+                VALUES (?, ?, ?, ?, ?, ?, ?)
+            ''', (current_user.id, student_name, reg_number, department, phone_number,
+                   image_path, date_reported_str))
+
             conn.commit()
             conn.close()
 

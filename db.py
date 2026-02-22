@@ -31,6 +31,7 @@ def init_db():
             student_name TEXT NOT NULL,
             reg_number TEXT NOT NULL,
             department TEXT NOT NULL,
+            phone_number TEXT NOT NULL,
             image_path TEXT NOT NULL,
             date_reported DATETIME,
             status TEXT DEFAULT 'Lost',
