@@ -1,5 +1,6 @@
 import os
 import uuid
+from utils import extract_id_info
 from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, flash, current_app, url_for
 from flask_login import login_required, current_user
@@ -95,6 +96,21 @@ def found():
             image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_name)
             image.save(image_path)
 
+            print(f"Processing image for OCR: {image_path}")
+            ai_data = extract_id_info(image_path)
+            
+            extracted_name = None
+            extracted_reg = None
+            extracted_dept = None
+            extracted_phone = None
+            
+            if ai_data:
+                extracted_name = ai_data.get('student_name') 
+                extracted_reg = ai_data.get('reg_number')
+                extracted_dept = ai_data.get('department')
+                extracted_phone = ai_data.get('phone_number')
+                print(f"AI Results: {ai_data}")
+
             date_found = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
             finder_id = current_user.id if current_user.is_authenticated else None
@@ -103,10 +119,14 @@ def found():
             cursor = conn.cursor()
             
             cursor.execute('''
-                INSERT INTO found_ids (user_id, location_found, image_path, date_reported, status)
-                VALUES (?, ?, ?, ?, 'Unclaimed')
-            ''', (finder_id, location, image_path, date_found))
-
+                INSERT INTO found_ids (
+                    user_id, location_found, image_path, date_reported, status,
+                    extracted_name, extracted_reg_number, extracted_department, extracted_phone
+                )
+                VALUES (?, ?, ?, ?, 'Unclaimed', ?, ?, ?, ?)
+            ''', (finder_id, location, image_path, date_found, 
+                  extracted_name, extracted_reg, extracted_dept, extracted_phone))
+            
             conn.commit()
             conn.close()
 

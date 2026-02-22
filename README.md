@@ -95,10 +95,17 @@ python
 >>> exit()
 ```
 
-### 6. Run the Application
+### 6. AI Model Setup
+
+This project uses a custom YOLO model for OCR text extraction. Due to file size limits, the model weights are not stored in this repository.
+
+1. Download the `best.pt` model file from here: [https://drive.google.com/file/d/1fbxR-u653JT9rPC9XzcZDKvCQjQCL9w4/view?usp=sharing]
+2. Place the `best.pt` file directly in the root directory of this project.
+
+### 7. Run the Application
 
 ```bash
-python app.py or py app.py
+python app.py OR py app.py
 ```
 
 Open your browser and navigate to: http://127.0.0.1:5000/

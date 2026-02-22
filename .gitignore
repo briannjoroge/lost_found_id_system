@@ -23,3 +23,8 @@ env/
 !screenshots/
 !screenshots/*.png
 !screenshots/*.jpg
+
+# Model weights
+*.pt
+runs/
+weights/

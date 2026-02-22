@@ -48,6 +48,7 @@ def init_db():
             extracted_name TEXT,
             extracted_reg_number TEXT,
             extracted_department TEXT,
+            extracted_phone TEXT,
             status TEXT DEFAULT 'Unclaimed',
             claimed_by_user_id INTEGER,
             FOREIGN KEY(user_id) REFERENCES users(id)
