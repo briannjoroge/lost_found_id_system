@@ -1440,6 +1440,18 @@ body.admin-login-body {
   background: #e74c3c;
 }
 
+.badge-ai {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  display: inline-block;
+  margin: 4px 0;
+  border: 1px solid #c8e6c9;
+  font-weight: bold;
+}
+
 /* --- Admin Manage Items Page Styles --- */
 .btn-delete {
   background: #e74c3c;

@@ -44,6 +44,12 @@
               <tr>
                 <td>
                   <strong>{{ claim['student_name'] }}</strong><br />
+
+                  {% if claim['admin_notes'] %}
+                  <div class="badge-ai">{{ claim['admin_notes'] }}</div>
+                  <br />
+                  {% endif %}
+
                   <span class="text-muted">{{ claim['reg_number'] }}</span
                   ><br />
                   <span class="text-small">📞 {{ claim['phone'] }}</span><br />

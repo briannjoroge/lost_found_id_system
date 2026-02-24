@@ -7,6 +7,7 @@ from flask_login import login_required, current_user
 from werkzeug.utils import secure_filename
 from db import get_db_connection, get_lost_ids, get_found_ids
 from auth import admin_required
+from matching import check_for_ai_match
 
 main_bp = Blueprint('main', __name__)
 
@@ -32,7 +33,7 @@ def home():
 def lost():
     if request.method == 'POST':
         student_name = request.form['student_name']
-        reg_number = request.form['reg_number']
+        reg_number = request.form['reg_number'].upper().strip()
         department = request.form['department']
         phone_number = request.form['phone_number']
         
@@ -66,6 +67,8 @@ def lost():
 
             conn.commit()
             conn.close()
+
+            check_for_ai_match(reg_number=reg_number, submitting_user_id=current_user.id)
 
             flash('Report submitted successfully!', 'success')
             return redirect('/')
@@ -132,8 +135,12 @@ def found():
             ''', (finder_id, location, image_path, date_found, 
                   extracted_name, extracted_reg, extracted_dept, extracted_phone))
             
+            new_found_id = cursor.lastrowid
             conn.commit()
             conn.close()
+
+            if extracted_reg:
+                check_for_ai_match(reg_number=extracted_reg, new_found_id=new_found_id)
 
             flash('Found ID reported successfully!', 'success')
             return redirect('/')
@@ -262,6 +269,7 @@ def admin_claims():
             claims.id as claim_id,
             claims.status as claim_status,
             claims.date_claimed,
+            claims.admin_notes,
             users.name as student_name,
             users.reg_number,
             users.phone,
