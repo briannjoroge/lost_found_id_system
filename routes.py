@@ -68,7 +68,9 @@ def lost():
             conn.commit()
             conn.close()
 
-            check_for_ai_match(reg_number=reg_number, submitting_user_id=current_user.id)
+            check_for_ai_match(reg_number=reg_number,
+                               phone_number=phone_number,
+                               submitting_user_id=current_user.id)
 
             flash('Report submitted successfully!', 'success')
             return redirect('/')
@@ -140,7 +142,9 @@ def found():
             conn.close()
 
             if extracted_reg:
-                check_for_ai_match(reg_number=extracted_reg, new_found_id=new_found_id)
+                check_for_ai_match(reg_number=extracted_reg,
+                                   phone_number=extracted_phone,
+                                   new_found_id=new_found_id)
 
             flash('Found ID reported successfully!', 'success')
             return redirect('/')
