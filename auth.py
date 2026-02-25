@@ -48,11 +48,11 @@ def admin_required(f):
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
-        name = request.form['name']
-        email = request.form['email']
-        phone = request.form['phone']
-        reg_number = request.form['reg_number'] 
-        department = request.form['department']
+        name = request.form['name'].strip().title()
+        email = request.form['email'].strip().lower()
+        phone = request.form['phone'].strip()
+        reg_number = request.form['reg_number'].strip().upper()
+        department = request.form['department'].strip().title()
         password = request.form['password']
         
         conn = get_db_connection()
