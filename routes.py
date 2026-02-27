@@ -11,6 +11,23 @@ from matching import check_for_ai_match
 
 main_bp = Blueprint('main', __name__)
 
+@main_bp.app_context_processor
+def inject_unread_claims():
+    unread_count = 0
+    if current_user.is_authenticated:
+        conn = get_db_connection()
+
+        result = conn.execute(
+            'SELECT COUNT(*) FROM claims WHERE user_id = ? AND is_read = 0',
+            (current_user.id,)
+        ).fetchone()
+        
+        if result:
+            unread_count = result[0]
+        conn.close()
+        
+    return dict(unread_count=unread_count)
+
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 def allowed_file(filename):
@@ -172,6 +189,20 @@ def all_found():
 @login_required
 def dashboard():
     conn = get_db_connection()
+
+    unread_claims = conn.execute(
+        'SELECT id FROM claims WHERE user_id = ? AND is_read = 0',
+        (current_user.id,)
+    ).fetchall()
+
+    if unread_claims:
+        flash('🎉 Good news! A potential match for your ID was found. Check your claims below!')
+        
+        conn.execute(
+            'UPDATE claims SET is_read = 1 WHERE user_id = ? AND is_read = 0',
+            (current_user.id,)
+        )
+        conn.commit()
     
     my_lost_items = conn.execute('''
         SELECT * FROM lost_ids 
@@ -197,6 +228,26 @@ def dashboard():
     return render_template('dashboard.html', 
                          my_lost_items=my_lost_items, 
                          my_claims=my_claims)
+
+@main_bp.route('/claim/drop/<int:claim_id>', methods=['POST'])
+@login_required
+def drop_claim(claim_id):
+    conn = get_db_connection()
+    
+    claim = conn.execute(
+        'SELECT id FROM claims WHERE id = ? AND user_id = ?', 
+        (claim_id, current_user.id)
+    ).fetchone()
+    
+    if claim:
+        conn.execute('UPDATE claims SET status = "Cancelled" WHERE id = ?', (claim_id,))
+        conn.commit()
+        flash('Claim successfully dropped. The ID has been released.', 'info')
+    else:
+        flash('Invalid request or unauthorized.', 'error')
+        
+    conn.close()
+    return redirect(url_for('main.dashboard'))
 
 @main_bp.route('/claim/<int:item_id>', methods=['POST'])
 @login_required

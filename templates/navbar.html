@@ -8,7 +8,10 @@
     <span>MUT ID Tracker</span>
   </a>
 
-  <div class="hamburger" onclick="toggleMenu()">
+  <div class="hamburger" onclick="toggleMenu()" style="position: relative">
+    {% if current_user.is_authenticated and unread_count > 0 %}
+    <span class="notification-dot hamburger-dot"></span>
+    {% endif %}
     <div></div>
     <div></div>
     <div></div>
@@ -21,7 +24,11 @@
 
     {% if current_user.is_authenticated %}
 
-    <a href="{{ url_for('main.dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('main.dashboard') }}" class="dashboard-link">
+      Dashboard {% if unread_count > 0 %}
+      <span class="notification-dot dash-dot"></span>
+      {% endif %}
+    </a>
 
     <a
       href="{{ url_for('auth.profile') }}"

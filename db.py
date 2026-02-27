@@ -65,6 +65,7 @@ def init_db():
             status TEXT DEFAULT 'Pending',
             date_claimed TEXT DEFAULT CURRENT_TIMESTAMP,
             admin_notes TEXT,
+            is_read INTEGER DEFAULT 0, -- NEW COLUMN: 0 = Unread, 1 = Read
             FOREIGN KEY(found_id) REFERENCES found_ids(id),
             FOREIGN KEY(user_id) REFERENCES users(id)
         )

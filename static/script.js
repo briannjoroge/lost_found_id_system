@@ -71,18 +71,16 @@ if (backToTopBtn) {
 }
 
 // --- 5. Modal for Student ID Details ---
-const modal = document.getElementById("idModal");
-const modalTitle = document.getElementById("modalTitle");
-const modalImg = document.getElementById("modalImg");
-const modalDetails = document.getElementById("modalDetails");
-
 function openModal(card) {
+  const modalTitle = document.getElementById("modalTitle");
+  const modalImg = document.getElementById("modalImg");
+  const modalDetails = document.getElementById("modalDetails");
+
   const type = card.getAttribute("data-type");
   const imgStr = card.getAttribute("data-img");
   const dateStr = card.getAttribute("data-date");
   const itemId = card.getAttribute("data-id");
 
-  modal.style.display = "flex";
   modalImg.src = imgStr;
 
   let htmlContent = "";
@@ -112,7 +110,7 @@ function openModal(card) {
             <hr style="margin: 15px 0; border: 0; border-top: 1px solid #eee;">
         `;
 
-    if (userLoggedIn) {
+    if (typeof userLoggedIn !== "undefined" && userLoggedIn) {
       htmlContent += `
                 <p style="margin-bottom: 10px; font-weight: bold; color: #2c3e50;">Is this your ID?</p>
                 <form action="/claim/${itemId}" method="POST">
@@ -132,21 +130,42 @@ function openModal(card) {
   }
 
   modalDetails.innerHTML = htmlContent;
+
+  openModalById("idModal");
 }
 
 function closeModal() {
-  document.getElementById("idModal").style.display = "none";
+  closeModalById("idModal");
 }
 
-// Close modal if user clicks outside the box
-window.onclick = function (event) {
-  const modal = document.getElementById("idModal");
-  if (event.target == modal) {
+// --- 6. UNIVERSAL MODAL HANDLING ---
+// Open any modal by passing its ID
+function openModalById(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
+    modal.style.display = "flex";
+  }
+}
+
+// Close any modal by passing its ID
+function closeModalById(modalId) {
+  const modal = document.getElementById(modalId);
+  if (modal) {
     modal.style.display = "none";
+  }
+}
+
+// Click outside to close modal
+window.onclick = function (event) {
+  if (
+    event.target.classList.contains("modal") ||
+    event.target.classList.contains("modal-overlay")
+  ) {
+    event.target.style.display = "none";
   }
 };
 
-// --- 5. Client-Side Search / Filter Logic ---
+// --- 7. Client-Side Search / Filter Logic ---
 function filterGrid() {
   const input = document.getElementById("searchInput");
   const filter = input.value.toLowerCase();

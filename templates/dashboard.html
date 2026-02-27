@@ -68,8 +68,20 @@
               <span class="status-badge status-approved">Approved</span>
               {% elif claim['claim_status'] == 'Rejected' %}
               <span class="status-badge status-rejected">Rejected</span>
+              {% elif claim['claim_status'] == 'Cancelled' %}
+              <span class="status-badge status-dropped">Dropped</span>
               {% else %}
-              <span class="status-badge status-pending">Pending</span>
+              <div class="claim-actions-group">
+                <span class="status-badge status-pending">Pending</span>
+                <button
+                  onclick="prepareDropModal(this)"
+                  data-claim-id="{{ claim['claim_id'] }}"
+                  data-img="/{{ claim['image_path'].replace('\\', '/') }}"
+                  class="btn-dashboard btn-review"
+                >
+                  🔍 Review
+                </button>
+              </div>
               {% endif %}
             </div>
             {% endfor %}
@@ -88,6 +100,42 @@
         </div>
       </div>
     </div>
+
+    <div id="dropModal" class="modal">
+      <div class="modal-content modal-content-sm">
+        <span onclick="closeModalById('dropModal')" class="close-modal"
+          >&times;</span
+        >
+
+        <h2 class="modal-header-sm">Review ID</h2>
+        <p class="text-muted modal-subtitle">Is this your ID card?</p>
+
+        <img id="dropModalImg" class="modal-img modal-img-sm" src="" />
+
+        <div class="alert-warning">
+          <strong>Not yours?</strong> If the AI made a mistake, please drop the
+          claim so the real owner can find it.
+        </div>
+
+        <form id="dropForm" method="POST" action="">
+          <button type="submit" class="load-btn btn-danger-full">
+            ✕ No, Drop Claim
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      function prepareDropModal(btn) {
+        const claimId = btn.getAttribute("data-claim-id");
+        const imagePath = btn.getAttribute("data-img");
+
+        document.getElementById("dropModalImg").src = imagePath;
+        document.getElementById("dropForm").action = "/claim/drop/" + claimId;
+
+        openModalById("dropModal");
+      }
+    </script>
 
     <script src="{{ url_for('static', filename='script.js') }}" defer></script>
   </body>

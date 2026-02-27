@@ -81,6 +81,35 @@ nav {
   color: #1abc9c;
 }
 
+/* --- Navigation Bar Notification Dots --- */
+.notification-dot {
+  background-color: #ff3b30;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.hamburger-dot {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 12px;
+  height: 12px;
+  border: 2px solid white;
+  z-index: 10;
+}
+
+.dash-dot {
+  width: 8px;
+  height: 8px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.dashboard-link {
+  display: inline-flex;
+  align-items: center;
+}
+
 /* --- NAVBAR AUTH STYLES --- */
 .user-welcome {
   color: #eee;
@@ -242,6 +271,18 @@ nav {
   background: #f39c12;
 }
 
+.status-dropped {
+  background-color: #f1f3f5;
+  color: #495057;
+}
+
+.claim-actions-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-end;
+}
+
 .empty-state-box {
   color: #95a5a6;
   padding: 20px;
@@ -285,6 +326,57 @@ nav {
   color: white;
   transform: translateY(-3px);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.btn-review {
+  padding: 4px 10px;
+  font-size: 0.8rem;
+  background: white;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-review:hover {
+  background-color: #f8f9fa;
+}
+
+.modal-content-sm {
+  max-width: 400px;
+  text-align: center;
+}
+
+.modal-header-sm {
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
+.modal-subtitle {
+  font-size: 0.9rem;
+  margin-top: 0;
+}
+
+.alert-warning {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 0.85rem;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.btn-danger-full {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  width: 100%;
+}
+
+.btn-danger-full:hover {
+  background-color: #c82333;
 }
 
 /* --- Back to Top Button --- */
@@ -436,6 +528,8 @@ p {
   background-color: rgba(0, 0, 0, 0.8);
   align-items: center;
   justify-content: center;
+  padding: 20px;
+  box-sizing: border-box;
 }
 
 .modal-content {
@@ -444,31 +538,26 @@ p {
   border-radius: 10px;
   max-width: 500px;
   width: 90%;
+  max-height: 85vh;
+  height: fit-content;
+  overflow-y: auto;
+  overscroll-behavior: contain;
   text-align: left;
   position: relative;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
-.close-btn {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  font-size: 28px;
-  font-weight: bold;
-  color: #aaa;
-  cursor: pointer;
-}
-
-.close-btn:hover {
-  color: #000;
-}
-
 .modal-img {
   width: 100%;
   height: auto;
+  object-fit: contain;
   border-radius: 5px;
   margin-bottom: 15px;
   border: 1px solid #ddd;
+}
+
+.modal-img-sm {
+  max-height: 250px;
 }
 
 /* --- CLAIM SECTION STYLES --- */
@@ -1540,25 +1629,42 @@ body.admin-login-body {
 
 .modal-content {
   margin: 5% auto;
-  background: white;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 500px;
   width: 90%;
-  max-width: 800px;
-  padding: 25px;
-  border-radius: 8px;
+  max-height: 85vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  text-align: left;
   position: relative;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
 }
 
 .close-modal {
-  position: absolute;
-  top: 15px;
-  right: 20px;
-  font-size: 30px;
+  position: sticky;
+  top: 10px;
+  float: right;
+  font-size: 28px;
+  z-index: 100;
+  font-weight: bold;
+  color: #555;
   cursor: pointer;
-  color: #7f8c8d;
+  background: #ffffff;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: color 0.2s ease;
 }
 
 .close-modal:hover {
-  color: #2c3e50;
+  color: #dc3545;
+  transform: scale(1.1);
 }
 
 .modal-header h2 {
