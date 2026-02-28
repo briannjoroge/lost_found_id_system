@@ -26,7 +26,7 @@
           <div class="items-list">
             {% for item in my_lost_items %}
             <div class="item-row">
-              <img src="/{{ item['image_path'] }}" class="item-img" />
+              <img src="{{ item['image_path'] }}" class="item-img" />
               <div class="item-details">
                 <strong>{{ item['student_name'] }}</strong><br />
                 <small>Reported on: {{ item['date_reported'] }}</small>
@@ -58,7 +58,7 @@
           <div class="items-list">
             {% for claim in my_claims %}
             <div class="item-row">
-              <img src="/{{ claim['image_path'] }}" class="item-img" />
+              <img src="{{ claim['image_path'] }}" class="item-img" />
               <div class="item-details">
                 <strong>ID found at {{ claim['location_found'] }}</strong><br />
                 <small>Claimed on: {{ claim['date_claimed'] }}</small>
@@ -76,7 +76,7 @@
                 <button
                   onclick="prepareDropModal(this)"
                   data-claim-id="{{ claim['claim_id'] }}"
-                  data-img="/{{ claim['image_path'].replace('\\', '/') }}"
+                  data-img="{{ claim['image_path'] }}"
                   class="btn-dashboard btn-review"
                 >
                   🔍 Review

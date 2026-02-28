@@ -8,6 +8,7 @@ from werkzeug.utils import secure_filename
 from db import get_db_connection, get_lost_ids, get_found_ids
 from auth import admin_required
 from matching import check_for_ai_match
+import cloudinary.uploader
 
 main_bp = Blueprint('main', __name__)
 
@@ -65,10 +66,12 @@ def lost():
             return redirect(request.url)
 
         if image and allowed_file(image.filename):
-            filename = secure_filename(image.filename)
-            unique_name = str(uuid.uuid4()) + "_" + filename
-            image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_name)
-            image.save(image_path)
+            # filename = secure_filename(image.filename)
+            # unique_name = str(uuid.uuid4()) + "_" + filename
+            # image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_name)
+            # image.save(image_path)
+            upload_result = cloudinary.uploader.upload(image)
+            cloud_url = upload_result.get('secure_url')
 
             date_reported_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -80,7 +83,7 @@ def lost():
                 phone_number, image_path, date_reported)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
             ''', (current_user.id, student_name, reg_number, department, phone_number,
-                   image_path, date_reported_str))
+                   cloud_url, date_reported_str))
 
             conn.commit()
             conn.close()
@@ -120,11 +123,11 @@ def found():
         if image and allowed_file(image.filename):
             filename = secure_filename(image.filename)
             unique_name = str(uuid.uuid4()) + "_" + filename
-            image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_name)
-            image.save(image_path)
+            local_image_path = os.path.join(current_app.config['UPLOAD_FOLDER'], unique_name)
+            image.save(local_image_path)
 
-            print(f"Processing image for OCR: {image_path}")
-            ai_data = extract_id_info(image_path)
+            print(f"Processing image for OCR: {local_image_path}")
+            ai_data = extract_id_info(local_image_path)
             
             extracted_name = None
             extracted_reg = None
@@ -137,6 +140,12 @@ def found():
                 extracted_dept = ai_data.get('department')
                 extracted_phone = ai_data.get('phone_number')
                 print(f"AI Results: {ai_data}")
+
+            upload_result = cloudinary.uploader.upload(local_image_path)
+            cloud_url = upload_result.get('secure_url')
+
+            if os.path.exists(local_image_path):
+                os.remove(local_image_path)
 
             date_found = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
@@ -151,7 +160,7 @@ def found():
                     extracted_name, extracted_reg_number, extracted_department, extracted_phone
                 )
                 VALUES (?, ?, ?, ?, 'Unclaimed', ?, ?, ?, ?)
-            ''', (finder_id, location, image_path, date_found, 
+            ''', (finder_id, location, cloud_url, date_found, 
                   extracted_name, extracted_reg, extracted_dept, extracted_phone))
             
             new_found_id = cursor.lastrowid

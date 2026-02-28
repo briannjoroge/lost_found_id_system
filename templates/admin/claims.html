@@ -58,10 +58,7 @@
 
                 <td>
                   <div class="claim-item-preview">
-                    <img
-                      src="/{{ claim['image_path'].replace('\\', '/') }}"
-                      class="thumbnail"
-                    />
+                    <img src="{{ claim['image_path'] }}" class="thumbnail" />
                     <div>
                       <small>Found at:</small><br />
                       <strong>{{ claim['location_found'] }}</strong>
@@ -73,30 +70,28 @@
                   {% if claim['claim_status'] == 'Pending' %}
                   <button
                     class="btn btn-verify"
-                    onclick="verifyClaim(
-            {{ claim['claim_id'] }}, 
-            '{{ safe_name }}', 
-            '{{ safe_reg }}', 
-            '{{ safe_dept }}', 
-            '{{ safe_phone }}', 
-            '/{{ claim['image_path'].replace('\\', '/') }}',
-            'Pending'
-        )"
+                    onclick="verifyClaim(this)"
+                    data-id="{{ claim['claim_id'] }}"
+                    data-name="{{ safe_name }}"
+                    data-reg="{{ safe_reg }}"
+                    data-dept="{{ safe_dept }}"
+                    data-phone="{{ safe_phone }}"
+                    data-img="{{ claim['image_path'] }}"
+                    data-status="Pending"
                   >
                     🔍 Verify Claim
                   </button>
                   {% else %}
                   <button
                     class="btn btn-view"
-                    onclick="verifyClaim(
-            {{ claim['claim_id'] }}, 
-            '{{ safe_name }}', 
-            '{{ safe_reg }}', 
-            '{{ safe_dept }}', 
-            '{{ safe_phone }}', 
-            '/{{ claim['image_path'].replace('\\', '/') }}',
-            '{{ claim['claim_status'] }}'
-        )"
+                    onclick="verifyClaim(this)"
+                    data-id="{{ claim['claim_id'] }}"
+                    data-name="{{ safe_name }}"
+                    data-reg="{{ safe_reg }}"
+                    data-dept="{{ safe_dept }}"
+                    data-phone="{{ safe_phone }}"
+                    data-img="{{ claim['image_path'] }}"
+                    data-status="{{ claim['claim_status'] }}"
                   >
                     👁️ View Proof
                   </button>
@@ -186,7 +181,15 @@
     <script src="{{ url_for('static', filename='admin.js') }}"></script>
 
     <script>
-      function verifyClaim(claimId, name, reg, dept, phone, imgSrc, status) {
+      function verifyClaim(btn) {
+        const claimId = btn.getAttribute("data-id");
+        const name = btn.getAttribute("data-name");
+        const reg = btn.getAttribute("data-reg");
+        const dept = btn.getAttribute("data-dept");
+        const phone = btn.getAttribute("data-phone");
+        const imgSrc = btn.getAttribute("data-img");
+        const status = btn.getAttribute("data-status");
+
         document.getElementById("modalName").innerText = name;
         document.getElementById("modalReg").innerText = reg;
         document.getElementById("modalDept").innerText = dept;
