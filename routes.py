@@ -261,6 +261,8 @@ def drop_claim(claim_id):
 @main_bp.route('/claim/<int:item_id>', methods=['POST'])
 @login_required
 def claim_item(item_id):
+    date_claimed_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    
     conn = get_db_connection()
     
     item = conn.execute('SELECT * FROM found_ids WHERE id = ?', (item_id,)).fetchone()
@@ -281,13 +283,13 @@ def claim_item(item_id):
         return redirect(url_for('main.all_found'))
 
     conn.execute(
-        'INSERT INTO claims (found_id, user_id, status) VALUES (?, ?, ?)',
-        (item_id, current_user.id, 'Pending')
+        'INSERT INTO claims (found_id, user_id, status, date_claimed) VALUES (?, ?, ?, ?)',
+        (item_id, current_user.id, 'Pending', date_claimed_str)
     )
     conn.commit()
     conn.close()
 
-    flash('Claim submitted! Visit the admin office for verification.', 'success')
+    flash('Claim submitted! We will notify you once the admin verifies your details.', 'success')
     return redirect(url_for('main.all_found'))
 
 # --- ADMIN Routes ---

@@ -61,9 +61,8 @@ def init_db():
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             found_id INTEGER NOT NULL,
             user_id INTEGER NOT NULL,
-            claim_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+            date_claimed DATETIME,
             status TEXT DEFAULT 'Pending',
-            date_claimed TEXT DEFAULT CURRENT_TIMESTAMP,
             admin_notes TEXT,
             is_read INTEGER DEFAULT 0, -- NEW COLUMN: 0 = Unread, 1 = Read
             FOREIGN KEY(found_id) REFERENCES found_ids(id),

@@ -1,5 +1,6 @@
 import difflib
 from db import get_db_connection
+from datetime import datetime
 
 def get_similarity(str1, str2):
     """Returns a similarity score between 0.0 and 100.0"""
@@ -68,10 +69,12 @@ def check_for_ai_match(reg_number, phone_number=None, new_found_id=None, submitt
         if not existing:
             formatted_score = f"{best_score:.1f}%"
             note = f"🤖 AI Match: {formatted_score} Confidence"
+
+            date_claimed_str = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
             
             conn.execute(
-                'INSERT INTO claims (found_id, user_id, status, admin_notes) VALUES (?, ?, ?, ?)',
-                (found_id, user_id, 'Pending', note)
+                'INSERT INTO claims (found_id, user_id, status, date_claimed, admin_notes) VALUES (?, ?, ?, ?, ?)',
+                (found_id, user_id, 'Pending', date_claimed_str, note)
             )
 
     conn.commit()
