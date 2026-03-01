@@ -379,6 +379,22 @@ nav {
   background-color: #c82333;
 }
 
+#confirmForm {
+  margin-bottom: 10px;
+}
+
+.btn-success-full {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  width: 100%;
+  margin-bottom: 0 !important;
+}
+
+.btn-success-full:hover {
+  background-color: #218838;
+}
+
 /* --- Back to Top Button --- */
 #backToTop {
   display: none;

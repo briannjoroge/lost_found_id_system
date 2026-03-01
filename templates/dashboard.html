@@ -117,6 +117,12 @@
           claim so the real owner can find it.
         </div>
 
+        <form id="confirmForm" method="POST" action="">
+          <button type="submit" class="load-btn btn-success-full">
+            ✅ Yes, This is My ID
+          </button>
+        </form>
+
         <form id="dropForm" method="POST" action="">
           <button type="submit" class="load-btn btn-danger-full">
             ✕ No, Drop Claim
@@ -131,6 +137,9 @@
         const imagePath = btn.getAttribute("data-img");
 
         document.getElementById("dropModalImg").src = imagePath;
+
+        document.getElementById("confirmForm").action =
+          "/claim/confirm/" + claimId;
         document.getElementById("dropForm").action = "/claim/drop/" + claimId;
 
         openModalById("dropModal");

@@ -238,26 +238,6 @@ def dashboard():
                          my_lost_items=my_lost_items, 
                          my_claims=my_claims)
 
-@main_bp.route('/claim/drop/<int:claim_id>', methods=['POST'])
-@login_required
-def drop_claim(claim_id):
-    conn = get_db_connection()
-    
-    claim = conn.execute(
-        'SELECT id FROM claims WHERE id = ? AND user_id = ?', 
-        (claim_id, current_user.id)
-    ).fetchone()
-    
-    if claim:
-        conn.execute('UPDATE claims SET status = "Cancelled" WHERE id = ?', (claim_id,))
-        conn.commit()
-        flash('Claim successfully dropped. The ID has been released.', 'info')
-    else:
-        flash('Invalid request or unauthorized.', 'error')
-        
-    conn.close()
-    return redirect(url_for('main.dashboard'))
-
 @main_bp.route('/claim/<int:item_id>', methods=['POST'])
 @login_required
 def claim_item(item_id):
@@ -291,6 +271,32 @@ def claim_item(item_id):
 
     flash('Claim submitted! We will notify you once the admin verifies your details.', 'success')
     return redirect(url_for('main.all_found'))
+
+@main_bp.route('/claim/drop/<int:claim_id>', methods=['POST'])
+@login_required
+def drop_claim(claim_id):
+    conn = get_db_connection()
+    
+    claim = conn.execute(
+        'SELECT id FROM claims WHERE id = ? AND user_id = ?', 
+        (claim_id, current_user.id)
+    ).fetchone()
+    
+    if claim:
+        conn.execute('UPDATE claims SET status = "Cancelled" WHERE id = ?', (claim_id,))
+        conn.commit()
+        flash('Claim successfully dropped. The ID has been released.', 'info')
+    else:
+        flash('Invalid request or unauthorized.', 'error')
+        
+    conn.close()
+    return redirect(url_for('main.dashboard'))
+
+@main_bp.route('/claim/confirm/<int:claim_id>', methods=['POST'])
+@login_required
+def confirm_claim(claim_id):
+    flash('Awesome! We will notify you once the admin verifies your details.', 'success')
+    return redirect(url_for('main.dashboard'))
 
 # --- ADMIN Routes ---
 @main_bp.route('/admin')
