@@ -8,6 +8,7 @@ from flask_mail import Message
 from werkzeug.utils import secure_filename
 from db import get_db_connection, get_lost_ids, get_found_ids
 from auth import admin_required
+from notifications import send_approval_email
 from matching import check_for_ai_match
 import cloudinary.uploader
 
@@ -383,26 +384,14 @@ def approve_claim(claim_id):
     ''', (user_id, found_id))
 
     conn.execute('UPDATE lost_ids SET status = "Found" WHERE user_id = ?', (user_id,))
-    
     conn.execute('UPDATE claims SET status = "Rejected" WHERE found_id = ? AND id != ?', (found_id, claim_id))
     
     conn.commit()
     conn.close()
-
+    
     # Sending the Email Notification
     if student and student['email']:
-        from app import mail  # Imported here to prevent circular import errors
-        try:
-            msg = Message(
-                "Good News! Your Lost ID is Ready for Pickup",
-                recipients=[student['email']]
-            )
-            msg.body = f"Hello {student['name']},\n\nYour lost ID claim has been officially verified and approved! You can now visit the Admin Block to pick it up.\n\nThank you,\nMUT Admin"
-            mail.send(msg)
-            print(f"Success: Notification email sent to {student['email']}")
-        except Exception as e:
-            # This catches errors (like no internet connection) so the app doesn't crash
-            print(f"Warning: Email failed to send to {student['email']}. Error: {e}")
+        send_approval_email(student['name'], student['email'])
     
     flash('Claim approved! Item returned and user\'s lost report closed.', 'success')
     return redirect(url_for('main.admin_claims'))
@@ -417,7 +406,7 @@ def reject_claim(claim_id):
     flash('Claim rejected.', 'error')
     return redirect(url_for('main.admin_claims'))
 
-# --- MANAGE ITEMS ---
+# --- ADMIN MANAGE ITEMS ---
 @main_bp.route('/admin/items')
 @admin_required
 def admin_items():
