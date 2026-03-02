@@ -28,6 +28,8 @@ def extract_id_info(image_path):
     name_x, name_y = None, None
     course_x, course_y = None, None
     
+    all_extracted_text = []
+    
     for box in results[0].boxes:
         cls_id = int(box.cls[0])
         class_name = model.names[cls_id]
@@ -65,14 +67,11 @@ def extract_id_info(image_path):
             
             if name_x is not None and course_x is not None:
                 if box_w > box_h:  # Image is Horizontal
-                    # Image is upside down
                     if name_y > course_y:
                         crop = cv2.rotate(crop, cv2.ROTATE_180)
                 else:  # Image is Vertical
-                    # Image is rotated 90 degrees Clockwise
                     if name_x < course_x:
                         crop = cv2.rotate(crop, cv2.ROTATE_90_CLOCKWISE)
-                    # Image is rotated 90 degrees Counter-Clockwise
                     else:
                         crop = cv2.rotate(crop, cv2.ROTATE_90_COUNTERCLOCKWISE)
             
@@ -85,41 +84,56 @@ def extract_id_info(image_path):
             if ocr_result:
                 cleaned_text = " ".join(ocr_result).strip()
                 
+                # Add text to our global bucket
+                all_extracted_text.append(cleaned_text)
+                
                 if class_name == 'name':
-                    data['student_name'] = cleaned_text
+                    clean_name = re.sub(r'(?i)^name\s*[:\-]?\s*', '', cleaned_text)
+                    clean_name = clean_name.replace(':', '').strip()
+                    data['student_name'] = clean_name
                     
                 elif class_name == 'course':
-                    # Fix the '0' instead of '.' OCR mistake
-                    data['department'] = cleaned_text.replace("0", ".").replace(" .", ".")
+                    clean_course = re.sub(r'(?i)^course\s*[:\-]?\s*', '', cleaned_text)
+                    data['department'] = clean_course.replace("0", ".").replace(" .", ".").replace(":", "").strip()
                     
                 elif class_name in ['reg no', 'phone number']:
-                    # Remove whitespaces
                     temp_text = cleaned_text.replace(" ", "")
                     
-                    # REG NO. CHECK
-                    reg_pattern = r'[A-Za-z0-9]{2,5}[/l\-\\]\d{3,4}[/l\-\\]\d{4}'
-                    reg_match = re.search(reg_pattern, temp_text)
+                    if class_name == 'reg no':
+                        reg_pattern = r'[A-Za-z0-9]{2,5}[/l\-\\]\d{3,4}[/l\-\\]\d{4}'
+                        reg_match = re.search(reg_pattern, temp_text)
+                        if reg_match:
+                            clean_reg = reg_match.group(0)
+                            data['reg_number'] = re.sub(r'[/l\-\\]', '/', clean_reg).upper()
                     
-                    if reg_match:
-                        clean_reg = reg_match.group(0)
-                        formatted_reg = re.sub(r'[/l\-\\]', '/', clean_reg).upper()
-                        
-                        data['reg_number'] = formatted_reg
-                        continue
-                    
-                    # PHONE NUMBER CHECK
-                    phone_pattern = r'(?:\+254|0)?[17]\d{8}'
-                    phone_match = re.search(phone_pattern, temp_text)
-                    
-                    if phone_match and not re.search(r'[/l\-\\]', temp_text):
-                        raw_phone = phone_match.group(0)
-                        
-                        if len(raw_phone) == 9 and raw_phone.startswith(('7', '1')):
-                            raw_phone = "0" + raw_phone  
-                        elif raw_phone.startswith('+254'):
-                            raw_phone = "0" + raw_phone[4:]
-                            
-                        data['phone_number'] = raw_phone
-                        continue
+                    elif class_name == 'phone number':
+                        phone_pattern = r'(?:\+254|0)?[17]\d{8}'
+                        phone_match = re.search(phone_pattern, temp_text)
+                        if phone_match and not re.search(r'[/l\-\\]', temp_text):
+                            raw_phone = phone_match.group(0)
+                            if len(raw_phone) == 9 and raw_phone.startswith(('7', '1')):
+                                data['phone_number'] = "0" + raw_phone  
+                            elif raw_phone.startswith('+254'):
+                                data['phone_number'] = "0" + raw_phone[4:]
+                            else:
+                                data['phone_number'] = raw_phone
+
+    # If YOLO got confused by a sideways image and missed the Reg/Phone boxes, 
+    # we search the ENTIRE image text for the patterns!
+    
+    full_text_string = " ".join(all_extracted_text).replace(" ", "")
+    
+    if not data['reg_number']:
+        # Same pattern, but searching the whole image
+        reg_pattern = r'[A-Za-z0-9]{2,5}[/l\-\\]\d{3,4}[/l\-\\]\d{4}'
+        reg_fallback = re.search(reg_pattern, full_text_string, re.IGNORECASE)
+        if reg_fallback:
+            data['reg_number'] = re.sub(r'[/l\-\\]', '/', reg_fallback.group(0)).upper()
+
+    if not data['phone_number']:
+        phone_pattern = r'(?:254|0)[17]\d{8}'
+        phone_fallback = re.search(phone_pattern, full_text_string)
+        if phone_fallback:
+            data['phone_number'] = phone_fallback.group(0)
 
     return data
