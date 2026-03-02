@@ -4,6 +4,7 @@ from utils import extract_id_info
 from datetime import datetime
 from flask import Blueprint, render_template, request, redirect, flash, current_app, url_for
 from flask_login import login_required, current_user
+from flask_mail import Message
 from werkzeug.utils import secure_filename
 from db import get_db_connection, get_lost_ids, get_found_ids
 from auth import admin_required
@@ -371,6 +372,8 @@ def approve_claim(claim_id):
     found_id = claim['found_id']
     user_id = claim['user_id']  
 
+    student = conn.execute('SELECT name, email FROM users WHERE id = ?', (user_id,)).fetchone()
+
     conn.execute('UPDATE claims SET status = "Approved" WHERE id = ?', (claim_id,))
     
     conn.execute('''
@@ -385,6 +388,21 @@ def approve_claim(claim_id):
     
     conn.commit()
     conn.close()
+
+    # Sending the Email Notification
+    if student and student['email']:
+        from app import mail  # Imported here to prevent circular import errors
+        try:
+            msg = Message(
+                "Good News! Your Lost ID is Ready for Pickup",
+                recipients=[student['email']]
+            )
+            msg.body = f"Hello {student['name']},\n\nYour lost ID claim has been officially verified and approved! You can now visit the Admin Block to pick it up.\n\nThank you,\nMUT Admin"
+            mail.send(msg)
+            print(f"Success: Notification email sent to {student['email']}")
+        except Exception as e:
+            # This catches errors (like no internet connection) so the app doesn't crash
+            print(f"Warning: Email failed to send to {student['email']}. Error: {e}")
     
     flash('Claim approved! Item returned and user\'s lost report closed.', 'success')
     return redirect(url_for('main.admin_claims'))

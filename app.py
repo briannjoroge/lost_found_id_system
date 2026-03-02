@@ -2,6 +2,7 @@ import os
 from flask import Flask
 from flask_login import LoginManager
 from dotenv import load_dotenv
+from flask_mail import Mail
 
 import cloudinary
 
@@ -21,6 +22,16 @@ app = Flask(__name__)
 
 app.config['UPLOAD_FOLDER'] = 'static/uploads'
 app.secret_key = os.getenv('FLASK_SECRET_KEY', 'development_key_for_testing')
+
+# --- MAIL CONFIGURATION ---
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
+
+mail = Mail(app)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
