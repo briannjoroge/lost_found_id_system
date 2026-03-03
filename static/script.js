@@ -198,3 +198,34 @@ function filterGrid() {
     }
   }
 }
+
+// --- 8. FORM LOADING STATE - LOADING SPINNER ---
+document.addEventListener("DOMContentLoaded", function () {
+  const forms = document.querySelectorAll("form");
+
+  forms.forEach((form) => {
+    form.addEventListener("submit", function () {
+      const submitBtn = form.querySelector(".has-spinner");
+
+      if (submitBtn) {
+        const btnText = submitBtn.querySelector(".btn-text");
+        const spinner = submitBtn.querySelector(".spinner");
+
+        if (btnText) {
+          const loadingMsg =
+            submitBtn.getAttribute("data-loading-text") || "Processing...";
+          btnText.innerText = loadingMsg;
+        }
+
+        if (spinner) {
+          spinner.style.display = "inline-block";
+        }
+
+        setTimeout(() => {
+          submitBtn.disabled = true;
+          submitBtn.classList.add("btn-loading");
+        }, 10);
+      }
+    });
+  });
+});

@@ -68,7 +68,14 @@
             <small>Supported formats: JPG, PNG, JPEG</small>
           </div>
 
-          <button type="submit" class="submit-btn">Submit Found ID</button>
+          <button
+            type="submit"
+            class="submit-btn has-spinner"
+            data-loading-text="Uploading... Please Wait"
+          >
+            <span class="btn-text">Submit Found ID</span>
+            <span class="spinner" style="display: none"></span>
+          </button>
         </form>
       </div>
     </div>
